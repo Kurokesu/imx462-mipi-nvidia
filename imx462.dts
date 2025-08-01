@@ -1,0 +1,122 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    fragment@0 {
+        target-path = "/";
+        __overlay__ {
+            camera_imx462: camera_imx462@1a {
+                compatible = "sony,imx462";
+                reg = <0x1a>;
+                
+                /* Power supplies */
+                avdd-supply = <&p2822_vdd_1v8>;
+                iovdd-supply = <&p2822_vdd_1v8>;
+                dvdd-supply = <&p2822_vdd_1v2>;
+                
+                /* Reset GPIO */
+                reset-gpios = <&tegra_main_gpio TEGRA194_MAIN_GPIO(P, 4) GPIO_ACTIVE_LOW>;
+                
+                /* MIPI CSI-2 configuration */
+                port {
+                    imx462_ep: endpoint {
+                        remote-endpoint = <&csi_in0>;
+                        data-lanes = <1 2>;
+                        link-frequencies = /bits/ 64 <297000000>;
+                    };
+                };
+                
+                /* Sensor modes */
+                mode0 {
+                    num_lanes = "2";
+                    tegra_sinterface = "serial_a";
+                    phy_mode = "DPHY";
+                    discontinuous_clk = "yes";
+                    dpcm_enable = "no";
+                    cil_settletime = "0";
+                    dynamic_pixel_bit_depth = "10";
+                    csi_pixel_bit_depth = "10";
+                    mode_type = "bayer";
+                    pixel_phase = "bggr";
+                    active_w = "1920";
+                    active_h = "1080";
+                    readout_orientation = "0";
+                    line_length_pck = "4896";
+                    frame_length_lines = "1125";
+                    inherent_gain = "1";
+                    mclk_multiplier = "8";
+                    pix_clk_hz = "182400000";
+                    serdes_pix_clk_hz = "350000000";
+                    gain_factor = "16";
+                    min_gain_val = "1";
+                    max_gain_val = "16";
+                    step_gain_val = "1";
+                    default_gain = "1";
+                    min_hdr_ratio = "1";
+                    max_hdr_ratio = "1";
+                    framerate_factor = "1000000";
+                    min_framerate = "2000000";
+                    max_framerate = "30000000";
+                    step_framerate = "1";
+                    default_framerate = "30000000";
+                    exposure_factor = "1000000";
+                    default_coarse_time = "0x465";
+                    default_fine_time = "0x0";
+                    min_coarse_time = "0x1";
+                    max_coarse_time = "0x465";
+                    min_fine_time = "0x0";
+                    max_fine_time = "0x0";
+                };
+                
+                /* 4-lane mode configuration */
+                mode1 {
+                    num_lanes = "4";
+                    tegra_sinterface = "serial_a";
+                    phy_mode = "DPHY";
+                    discontinuous_clk = "yes";
+                    dpcm_enable = "no";
+                    cil_settletime = "0";
+                    dynamic_pixel_bit_depth = "10";
+                    csi_pixel_bit_depth = "10";
+                    mode_type = "bayer";
+                    pixel_phase = "bggr";
+                    active_w = "1920";
+                    active_h = "1080";
+                    readout_orientation = "0";
+                    line_length_pck = "4896";
+                    frame_length_lines = "1125";
+                    inherent_gain = "1";
+                    mclk_multiplier = "8";
+                    pix_clk_hz = "182400000";
+                    serdes_pix_clk_hz = "350000000";
+                    gain_factor = "16";
+                    min_gain_val = "1";
+                    max_gain_val = "16";
+                    step_gain_val = "1";
+                    default_gain = "1";
+                    min_hdr_ratio = "1";
+                    max_hdr_ratio = "1";
+                    framerate_factor = "1000000";
+                    min_framerate = "2000000";
+                    max_framerate = "30000000";
+                    step_framerate = "1";
+                    default_framerate = "30000000";
+                    exposure_factor = "1000000";
+                    default_coarse_time = "0x465";
+                    default_fine_time = "0x0";
+                    min_coarse_time = "0x1";
+                    max_coarse_time = "0x465";
+                    min_fine_time = "0x0";
+                    max_fine_time = "0x0";
+                };
+            };
+        };
+    };
+    
+    fragment@1 {
+        target = <&csi_in0>;
+        __overlay__ {
+            remote-endpoint = <&imx462_ep>;
+        };
+    };
+}; 
