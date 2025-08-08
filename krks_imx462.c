@@ -11,12 +11,36 @@
 
 #include <media/tegra_v4l2_camera.h>
 #include <media/tegracam_core.h>
-#include <media/imx462.h>
 
 #include "../platform/tegra/camera/camera_gpio.h"
 #include "imx462_mode_tbls.h"
 
 #define IMX462_SENSOR_INTERNAL_CLK_FREQ   840000000
+
+/* IMX462 Register Definitions */
+#define IMX462_MIN_FRAME_LENGTH		(1125)
+#define IMX462_MAX_FRAME_LENGTH		(0x1FFFF)
+#define IMX462_MIN_COARSE_EXPOSURE	(1)
+#define IMX462_MAX_COARSE_DIFF		(4)
+
+#define IMX462_FRAME_LENGTH_ADDR_MSB		0x0340
+#define IMX462_FRAME_LENGTH_ADDR_LSB		0x0341
+#define IMX462_COARSE_INTEG_TIME_ADDR_MSB	0x0202
+#define IMX462_COARSE_INTEG_TIME_ADDR_LSB	0x0203
+#define IMX462_FINE_INTEG_TIME_ADDR_MSB	0x0200
+#define IMX462_FINE_INTEG_TIME_ADDR_LSB	0x0201
+#define IMX462_ANALOG_GAIN_ADDR_MSB		0x0204
+#define IMX462_ANALOG_GAIN_ADDR_LSB		0x0205
+#define IMX462_GROUP_HOLD_ADDR			0x0104
+#define IMX462_MODEL_ID_ADDR_MSB		0x0000
+#define IMX462_MODEL_ID_ADDR_LSB		0x0001
+
+#define IMX462_ANALOG_GAIN_C0			0x10
+#define IMX462_MIN_GAIN			0x10
+#define IMX462_MAX_GAIN			0xF0
+#define IMX462_SHIFT_8_BITS			8
+#define IMX462_MASK_LSB_2_BITS			0x03
+#define IMX462_MASK_LSB_8_BITS			0xFF
 
 static const struct of_device_id imx462_of_match[] = {
 	{.compatible = "sony,imx462",},
