@@ -133,9 +133,21 @@ static inline int imx462_write_reg(struct camera_common_data *s_data,
 
 static int imx462_write_table(struct imx462 *priv, const imx462_reg table[])
 {
-	return regmap_util_write_table_8(priv->s_data->regmap, table, NULL, 0,
+	int err;
+	
+	dev_info(priv->s_data->dev, "%s: Writing register table\n", __func__);
+	
+	err = regmap_util_write_table_8(priv->s_data->regmap, table, NULL, 0,
 					 IMX462_TABLE_WAIT_MS,
 					 IMX462_TABLE_END);
+	
+	if (err) {
+		dev_err(priv->s_data->dev, "%s: Failed to write table (%d)\n", __func__, err);
+	} else {
+		dev_info(priv->s_data->dev, "%s: Register table written successfully\n", __func__);
+	}
+	
+	return err;
 }
 
 static int imx462_set_group_hold(struct tegracam_device *tc_dev, bool val)
@@ -618,39 +630,72 @@ static int imx462_set_mode(struct tegracam_device *tc_dev)
 	struct device_node *mode;
 	uint offset = ARRAY_SIZE(imx462_frmfmt);
 
-	dev_dbg(tc_dev->dev, "%s:\n", __func__);
+	dev_info(tc_dev->dev, "%s: Setting IMX462 mode\n", __func__);
+	
 	mode = of_get_child_by_name(tc_dev->dev->of_node, "mode0");
 	err = of_property_read_string(mode, "num_lanes", &config);
 
-	if (config[0] == '4')
+	if (config[0] == '4') {
 		priv->config = FOUR_LANE_CONFIG;
-	else if (config[0] == '2')
+		dev_info(tc_dev->dev, "%s: Using 4-lane configuration\n", __func__);
+	} else if (config[0] == '2') {
 		priv->config = TWO_LANE_CONFIG;
-	else
+		dev_info(tc_dev->dev, "%s: Using 2-lane configuration\n", __func__);
+	} else {
 		dev_err(tc_dev->dev, "Unsupported config\n");
+		return -EINVAL;
+	}
 
-	err = imx462_write_table(priv, mode_table[IMX462_MODE_COMMON]);
-	if (err)
+	dev_info(tc_dev->dev, "%s: Writing 2-lane mode table\n", __func__);
+	err = imx462_write_table(priv, mode_table[IMX462_MODE_1920X1080_2LANE]);
+	if (err) {
+		dev_err(tc_dev->dev, "%s: Failed to write 2-lane mode table (%d)\n", __func__, err);
 		return err;
+	}
 
 	mode_index = s_data->mode;
-	if (priv->config == FOUR_LANE_CONFIG)
+	if (priv->config == FOUR_LANE_CONFIG) {
+		dev_info(tc_dev->dev, "%s: Writing 4-lane mode table\n", __func__);
 		err = imx462_write_table(priv, mode_table[mode_index + offset]);
-	else
+	} else {
+		dev_info(tc_dev->dev, "%s: Using 2-lane mode table\n", __func__);
 		err = imx462_write_table(priv, mode_table[mode_index]);
+	}
 
-	if (err)
+	if (err) {
+		dev_err(tc_dev->dev, "%s: Failed to write mode table (%d)\n", __func__, err);
 		return err;
+	}
 
+	dev_info(tc_dev->dev, "%s: IMX462 mode set successfully\n", __func__);
 	return 0;
 }
 
 static int imx462_start_streaming(struct tegracam_device *tc_dev)
 {
 	struct imx462 *priv = (struct imx462 *)tegracam_get_privdata(tc_dev);
+	int err;
 
-	dev_dbg(tc_dev->dev, "%s:\n", __func__);
-	return imx462_write_table(priv, mode_table[IMX462_START_STREAM]);
+	dev_info(tc_dev->dev, "%s: Starting IMX462 streaming\n", __func__);
+	
+	/* First, set the mode configuration */
+	err = imx462_set_mode(tc_dev);
+	if (err) {
+		dev_err(tc_dev->dev, "%s: Failed to set mode (%d)\n", __func__, err);
+		return err;
+	}
+	
+	dev_info(tc_dev->dev, "%s: Mode set successfully, enabling streaming\n", __func__);
+	
+	/* Then enable streaming */
+	err = imx462_write_table(priv, mode_table[IMX462_MODE_START_STREAM]);
+	if (err) {
+		dev_err(tc_dev->dev, "%s: Failed to start streaming (%d)\n", __func__, err);
+		return err;
+	}
+	
+	dev_info(tc_dev->dev, "%s: IMX462 streaming started successfully\n", __func__);
+	return 0;
 }
 
 static int imx462_stop_streaming(struct tegracam_device *tc_dev)
@@ -659,7 +704,7 @@ static int imx462_stop_streaming(struct tegracam_device *tc_dev)
 	struct imx462 *priv = (struct imx462 *)tegracam_get_privdata(tc_dev);
 
 	dev_dbg(tc_dev->dev, "%s:\n", __func__);
-	err = imx462_write_table(priv, mode_table[IMX462_STOP_STREAM]);
+	err = imx462_write_table(priv, mode_table[IMX462_MODE_STOP_STREAM]);
 
 	return err;
 }
@@ -794,7 +839,7 @@ static int imx462_probe(struct i2c_client *client,
 		return err;
 	}
 
-	dev_dbg(dev, "detected imx462 sensor\n");
+	dev_info(dev, "IMX462 sensor probe completed successfully\n");
 
 	return 0;
 }
