@@ -15,6 +15,8 @@
 #include "../platform/tegra/camera/camera_gpio.h"
 #include "imx462_mode_tbls.h"
 
+#define DEBUG
+
 #define IMX462_SENSOR_INTERNAL_CLK_FREQ   840000000
 
 /* IMX462 Register Definitions */
@@ -135,7 +137,7 @@ static int imx462_write_table(struct imx462 *priv, const imx462_reg table[])
 {
 	int err;
 	
-	dev_info(priv->s_data->dev, "%s: Writing register table\n", __func__);
+	dev_dbg(priv->s_data->dev, "%s: Writing register table\n", __func__);
 	
 	err = regmap_util_write_table_8(priv->s_data->regmap, table, NULL, 0,
 					 IMX462_TABLE_WAIT_MS,
@@ -144,7 +146,7 @@ static int imx462_write_table(struct imx462 *priv, const imx462_reg table[])
 	if (err) {
 		dev_err(priv->s_data->dev, "%s: Failed to write table (%d)\n", __func__, err);
 	} else {
-		dev_info(priv->s_data->dev, "%s: Register table written successfully\n", __func__);
+		dev_dbg(priv->s_data->dev, "%s: Register table written successfully\n", __func__);
 	}
 	
 	return err;
@@ -630,72 +632,44 @@ static int imx462_set_mode(struct tegracam_device *tc_dev)
 	struct device_node *mode;
 	uint offset = ARRAY_SIZE(imx462_frmfmt);
 
-	dev_info(tc_dev->dev, "%s: Setting IMX462 mode\n", __func__);
-	
+	dev_dbg(tc_dev->dev, "%s:\n", __func__);
 	mode = of_get_child_by_name(tc_dev->dev->of_node, "mode0");
 	err = of_property_read_string(mode, "num_lanes", &config);
 
 	if (config[0] == '4') {
 		priv->config = FOUR_LANE_CONFIG;
-		dev_info(tc_dev->dev, "%s: Using 4-lane configuration\n", __func__);
+		dev_dbg(tc_dev->dev, "Using 4-lane configuration\n");
 	} else if (config[0] == '2') {
 		priv->config = TWO_LANE_CONFIG;
-		dev_info(tc_dev->dev, "%s: Using 2-lane configuration\n", __func__);
+		dev_dbg(tc_dev->dev, "Using 2-lane configuration\n");
 	} else {
 		dev_err(tc_dev->dev, "Unsupported config\n");
 		return -EINVAL;
 	}
 
-	dev_info(tc_dev->dev, "%s: Writing 2-lane mode table\n", __func__);
-	err = imx462_write_table(priv, mode_table[IMX462_MODE_1920X1080_2LANE]);
-	if (err) {
-		dev_err(tc_dev->dev, "%s: Failed to write 2-lane mode table (%d)\n", __func__, err);
+	err = imx462_write_table(priv, mode_table[IMX462_MODE_COMMON]);
+	if (err)
 		return err;
-	}
 
 	mode_index = s_data->mode;
-	if (priv->config == FOUR_LANE_CONFIG) {
-		dev_info(tc_dev->dev, "%s: Writing 4-lane mode table\n", __func__);
+	if (priv->config == FOUR_LANE_CONFIG)
 		err = imx462_write_table(priv, mode_table[mode_index + offset]);
-	} else {
-		dev_info(tc_dev->dev, "%s: Using 2-lane mode table\n", __func__);
+	else {
+		dev_dbg(tc_dev->dev, "Writing mode table %d\n", mode_index);
 		err = imx462_write_table(priv, mode_table[mode_index]);
 	}
-
-	if (err) {
-		dev_err(tc_dev->dev, "%s: Failed to write mode table (%d)\n", __func__, err);
+	if (err)
 		return err;
-	}
 
-	dev_info(tc_dev->dev, "%s: IMX462 mode set successfully\n", __func__);
 	return 0;
 }
 
 static int imx462_start_streaming(struct tegracam_device *tc_dev)
 {
 	struct imx462 *priv = (struct imx462 *)tegracam_get_privdata(tc_dev);
-	int err;
 
-	dev_info(tc_dev->dev, "%s: Starting IMX462 streaming\n", __func__);
-	
-	/* First, set the mode configuration */
-	err = imx462_set_mode(tc_dev);
-	if (err) {
-		dev_err(tc_dev->dev, "%s: Failed to set mode (%d)\n", __func__, err);
-		return err;
-	}
-	
-	dev_info(tc_dev->dev, "%s: Mode set successfully, enabling streaming\n", __func__);
-	
-	/* Then enable streaming */
-	err = imx462_write_table(priv, mode_table[IMX462_MODE_START_STREAM]);
-	if (err) {
-		dev_err(tc_dev->dev, "%s: Failed to start streaming (%d)\n", __func__, err);
-		return err;
-	}
-	
-	dev_info(tc_dev->dev, "%s: IMX462 streaming started successfully\n", __func__);
-	return 0;
+	dev_dbg(tc_dev->dev, "%s:\n", __func__);
+	return imx462_write_table(priv, mode_table[IMX462_START_STREAM]);
 }
 
 static int imx462_stop_streaming(struct tegracam_device *tc_dev)
@@ -704,7 +678,7 @@ static int imx462_stop_streaming(struct tegracam_device *tc_dev)
 	struct imx462 *priv = (struct imx462 *)tegracam_get_privdata(tc_dev);
 
 	dev_dbg(tc_dev->dev, "%s:\n", __func__);
-	err = imx462_write_table(priv, mode_table[IMX462_MODE_STOP_STREAM]);
+	err = imx462_write_table(priv, mode_table[IMX462_STOP_STREAM]);
 
 	return err;
 }
@@ -752,6 +726,9 @@ static int imx462_board_setup(struct imx462 *priv)
 			__func__, err);
 		goto err_reg_probe;
 	}
+
+	dev_dbg(dev, "%s: sensor model id: 0x%x%x\n",
+		__func__, reg_val[0], reg_val[1]);
 
 	if (!((reg_val[0] == 0x00) && reg_val[1] == 0x00))
 		dev_err(dev, "%s: invalid sensor model id: %x%x\n",
@@ -839,7 +816,7 @@ static int imx462_probe(struct i2c_client *client,
 		return err;
 	}
 
-	dev_info(dev, "IMX462 sensor probe completed successfully\n");
+	dev_dbg(dev, "detected imx462 sensor\n");
 
 	return 0;
 }
@@ -892,4 +869,4 @@ module_i2c_driver(imx462_i2c_driver);
 
 MODULE_DESCRIPTION("Media Controller driver for Sony IMX462");
 MODULE_AUTHOR("UAB Kurokesu");
-MODULE_LICENSE("GPL v2"); 
+MODULE_LICENSE("GPL v2");
