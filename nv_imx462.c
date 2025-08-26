@@ -1,3 +1,5 @@
+#define DEBUG
+
 #include <nvidia/conftest.h>
 
 #include <linux/slab.h>
@@ -15,7 +17,6 @@
 #include "../platform/tegra/camera/camera_gpio.h"
 #include "imx462_mode_tbls.h"
 
-#define DEBUG
 
 #define IMX462_SENSOR_INTERNAL_CLK_FREQ   840000000
 
