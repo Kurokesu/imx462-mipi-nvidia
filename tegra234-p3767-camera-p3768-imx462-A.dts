@@ -237,12 +237,12 @@
 							mode0 { /* IMX462_MODE_1920X1080_2LANE */
 								mclk_khz = "37125";
 								num_lanes = "2";
-								tegra_sinterface = "serial_a";
+								tegra_sinterface = "serial_b";
 								phy_mode = "DPHY";
 								discontinuous_clk = "no";
 								dpcm_enable = "false";
 								cil_settletime = "0";
-								lane_polarity = "0";
+								lane_polarity = "6";
 								active_w = "1920";
 								active_h = "1080";
 								mode_type = "bayer";
