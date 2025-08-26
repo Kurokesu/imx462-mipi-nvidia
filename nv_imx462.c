@@ -35,8 +35,10 @@
 #define IMX462_ANALOG_GAIN_ADDR_MSB		0x0204
 #define IMX462_ANALOG_GAIN_ADDR_LSB		0x0205
 #define IMX462_GROUP_HOLD_ADDR			0x0104
-#define IMX462_MODEL_ID_ADDR_MSB		0x0000
-#define IMX462_MODEL_ID_ADDR_LSB		0x0001
+
+/* TODO: IMX462 has no model ID. We read a registers with known values. */
+#define IMX462_MODEL_ID_ADDR_MSB		0x3004
+#define IMX462_MODEL_ID_ADDR_LSB		0x3008
 
 #define IMX462_ANALOG_GAIN_C0			0x10
 #define IMX462_MIN_GAIN			0x10
@@ -731,7 +733,7 @@ static int imx462_board_setup(struct imx462 *priv)
 	dev_dbg(dev, "%s: sensor model id: 0x%x%x\n",
 		__func__, reg_val[0], reg_val[1]);
 
-	if (!((reg_val[0] == 0x00) && reg_val[1] == 0x00))
+	if (!((reg_val[0] == 0x10) && reg_val[1] == 0xA0))
 		dev_err(dev, "%s: invalid sensor model id: %x%x\n",
 			__func__, reg_val[0], reg_val[1]);
 
