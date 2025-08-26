@@ -66,7 +66,7 @@
 // #define IMX462_VMAX					CCI_REG24_LE(0x3018)
 #define IMX462_SHS1_LSB 0x3020
 #define IMX462_HMAX_LSB 0x301c
-#define IMX462_HMAX_MSB 0x301c
+#define IMX462_HMAX_MSB 0x301d
 
 #define imx462_reg struct reg_8
 
