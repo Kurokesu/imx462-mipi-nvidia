@@ -193,8 +193,8 @@ static imx462_reg imx462_mode_1920x1080[] = {
 	{IMX462_GAIN, 0x00},
 	// { IMX462_VMAX, 1125 },
 	{IMX462_SHS1_LSB, 11},
-	{IMX462_HMAX_LSB, 2200 & 0xF},
-	{IMX462_HMAX_MSB, (2200 >> 8) & 0xF},
+	{IMX462_HMAX_LSB, 2200 & 0xFF},
+	{IMX462_HMAX_MSB, (2200 >> 8) & 0xFF},
 	{IMX462_TABLE_END, 0x0},
 };
 
