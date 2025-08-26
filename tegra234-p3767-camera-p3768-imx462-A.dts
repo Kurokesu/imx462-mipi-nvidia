@@ -14,7 +14,7 @@
 	overlay-name = "Camera IMX462-A";
 	jetson-header-name = "Jetson 24pin CSI Connector";
 	compatible = JETSON_COMPATIBLE_P3768;
-	/* IMX462 connected to cam1 port */
+	/* IMX462 connected to cam0 port */
 
 	fragment@0 {
 		target-path = "/";
@@ -140,8 +140,8 @@
 							/* V4L2 device node location */
 							devnode = "video0";
 							/* Physical dimensions of sensor */
-							physical_w = "15.0";
-							physical_h = "12.5";
+							physical_w = "5.62";
+							physical_h = "3.18";
 							sensor_model = "imx462";
 							use_sensor_mode_id = "true";
 							/**
