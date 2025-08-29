@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
-// SPDX-FileCopyrightText: Copyright (c) 2025, UAB Kurokesu. All rights reserved.
+// SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 
 /dts-v1/;
 /plugin/;
@@ -81,7 +81,7 @@
 				 */
 				modules {
 					module0 {
-						badge = "jakku_front_RBPCV3";
+						badge = "kurokesu_front_462M12";
 						position = "front";
 						orientation = "1";
 						drivernode0 {
