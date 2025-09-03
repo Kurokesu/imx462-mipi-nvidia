@@ -46,7 +46,7 @@ v4l2-ctl -d /dev/video0 --set-fmt-video=width=1920,height=1080,pixelformat=RG10 
 
 ## Build
 
-Currently the driver is built directly in the kernel sources as acquiring NVIDIA Linux headers hasn't been implemented yet. Best to use host PC, because whole kernel has to be built initially. Full NVIDIA kernel customization guide: https://docs.nvidia.com/jetson/archives/r36.4.4/DeveloperGuide/SD/Kernel/KernelCustomization.html
+Currently the driver is built directly in the kernel sources as acquiring NVIDIA Linux headers hasn't been implemented yet. Best to use host PC, because whole kernel has to be built initially. Full NVIDIA kernel customization guide can be found [here](https://docs.nvidia.com/jetson/archives/r36.4.4/DeveloperGuide/SD/Kernel/KernelCustomization.html).
 
 ### Prerequisites
 
@@ -111,3 +111,16 @@ Build the DTBs:
 ```bash
 make dtbs
 ```
+
+Now that the default kernel build is ready, we can add imx462 driver sources and build them using `build.sh` script.
+Make script executable:
+```bash
+chmod +x ./build.sh 
+```
+
+Build:
+```bash
+./build.sh
+```
+
+Upon succcessful build the kernel files will be retrieved to `./build` directory. They can then be loaded onto target and used just as described in [Quick test](#quick-test).
