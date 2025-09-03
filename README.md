@@ -4,13 +4,13 @@ Compatible with NVIDIA Jetson Linux 36.4.4
 
 ## Quick test
 
-Pre-built driver files are provided in [./build](./build) directory.
+Pre-built driver files are provided in [./pre-built](./pre-built) directory.
 
 Connect camera to cam0 port.
 
 Copy device tree entry to `/boot` directory:
 ```bash
-cp ./build/tegra234-p3767-camera-p3768-imx462-A.dtbo /boot
+cp ./pre-built/tegra234-p3767-camera-p3768-imx462-A.dtbo /boot
 ```
 
 Use Jetsion-IO tool to configure 24pin CSI Connector:
@@ -30,7 +30,7 @@ sudo reboot
 
 Load imx462 driver module:
 ```bash
-sudo insmod ./build/nv_imx462.ko
+sudo insmod ./pre-built/nv_imx462.ko
 ```
 
 Verify sensor detected over i2c:
