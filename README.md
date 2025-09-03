@@ -44,6 +44,11 @@ Stream raw data to file:
 v4l2-ctl -d /dev/video0 --set-fmt-video=width=1920,height=1080,pixelformat=RG10 --stream-mmap --stream-to imx462_1080p.raw --stream-count=1 --stream-skip=10 --verbose
 ```
 
+View raw bayer file:
+```bash
+python3 view_raw.py ./imx462_1080p.raw
+```
+
 ## Build
 
 Currently the driver is built directly in the kernel sources as acquiring NVIDIA Linux headers hasn't been implemented yet. Best to use host PC, because whole kernel has to be built initially. Full NVIDIA kernel customization guide can be found [here](https://docs.nvidia.com/jetson/archives/r36.4.4/DeveloperGuide/SD/Kernel/KernelCustomization.html).
