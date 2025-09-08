@@ -49,6 +49,27 @@ View raw bayer file:
 python3 view_raw.py ./imx462_1080p.raw
 ```
 
+## Test mode
+
+Sensor has built-in test pattern generator which can be enabled for verifying data validity.
+
+In order to enable it, simply add `test_mode=<test pattern>` to `insmod` command.
+
+Horizontal color-bar chart example:
+```bash
+sudo insmod ./pre-built/nv_imx462.ko test_mode=2
+```
+
+| Test pattern code | Description |
+| ------------ | ----------- |
+| 1 | Sequence Pattern 1 |
+| 2 | Horizontal Color-bar Chart |
+| 3 | Vertical Color-bar Chart |
+| 4 | Sequence Pattern 2 |
+| 5 | Gradation Pattern 1 |
+| 6 | Gradation Pattern 2 |
+| 7 | 000h/555h Toggle Pattern |
+
 ## Build
 
 Currently the driver is built directly in the kernel sources as acquiring NVIDIA Linux headers hasn't been implemented yet. Best to use host PC, because whole kernel has to be built initially. Full NVIDIA kernel customization guide can be found [here](https://docs.nvidia.com/jetson/archives/r36.4.4/DeveloperGuide/SD/Kernel/KernelCustomization.html).
