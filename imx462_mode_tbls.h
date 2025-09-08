@@ -68,6 +68,8 @@
 #define IMX462_HMAX_LSB 0x301C
 #define IMX462_HMAX_MSB 0x301D
 
+#define IMX462_PGCTRL 0x308C
+
 #define imx462_reg struct reg_8
 
 /* IMX462 Start Streaming */
@@ -198,41 +200,26 @@ static imx462_reg imx462_mode_1920x1080[] = {
 	{IMX462_TABLE_END, 0x0},
 };
 
-/* IMX462 1920x1080 4-lane mode */
-static imx462_reg imx462_mode_1920x1080_4lane[] = {
-	{0x0104, 0x01}, /* Grouped Parameter Hold */
-	{0x0220, 0x00}, /* Data Format Select */
-	{0x0222, 0x10}, /* 10-bit Output */
-	{0x0340, 0x0C}, /* Frame Length MSB */
-	{0x0341, 0x30}, /* Frame Length LSB */
-	{0x0342, 0x13}, /* Line Length MSB */
-	{0x0343, 0x20}, /* Line Length LSB */
-	{0x0344, 0x00}, /* X Start MSB */
-	{0x0345, 0x00}, /* X Start LSB */
-	{0x0346, 0x00}, /* Y Start MSB */
-	{0x0347, 0x00}, /* Y Start LSB */
-	{0x0348, 0x07}, /* X End MSB */
-	{0x0349, 0x7F}, /* X End LSB */
-	{0x034A, 0x04}, /* Y End MSB */
-	{0x034B, 0x3F}, /* Y End LSB */
-	{0x0104, 0x00}, /* Grouped Parameter Hold */
-	{IMX462_TABLE_END, 0x00}
+static imx462_reg imx462_mode_test_pattern[] = {
+	{IMX462_BLKLEVEL, 0x00},
+	{IMX462_TABLE_WAIT_MS, IMX462_WAIT_MS*10},
+	{IMX462_PGCTRL, 0x23},
 };
 
 enum {
 	IMX462_MODE_1920X1080,
-	IMX462_MODE_1920X1080_4LANE,
 	IMX462_MODE_COMMON,
 	IMX462_START_STREAM,
 	IMX462_STOP_STREAM,
+	IMX462_MODE_TEST_PATTERN,
 };
 
 static imx462_reg *mode_table[] = {
 	[IMX462_MODE_1920X1080] = imx462_mode_1920x1080,
-	[IMX462_MODE_1920X1080_4LANE] = imx462_mode_1920x1080_4lane,
 	[IMX462_MODE_COMMON] = imx462_mode_common,
 	[IMX462_START_STREAM] = imx462_start,
 	[IMX462_STOP_STREAM] = imx462_stop,
+	[IMX462_MODE_TEST_PATTERN] = imx462_mode_test_pattern,
 };
 
 static const int imx462_30fps[] = {
