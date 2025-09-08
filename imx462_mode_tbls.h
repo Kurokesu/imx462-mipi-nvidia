@@ -12,26 +12,26 @@
 #define IMX462_STANDBY 0x3000
 #define IMX462_XMSTA   0x3002
 
-#define IMX462_WINWV_OB	 0x303a
+#define IMX462_WINWV_OB	 0x303A
 #define IMX462_WINPH_LSB 0x3040
 #define IMX462_WINPH_MSB 0x3041
-#define IMX462_WINPV_LSB 0x303c
-#define IMX462_WINPV_MSB 0x303d
+#define IMX462_WINPV_LSB 0x303C
+#define IMX462_WINPV_MSB 0x303D
 #define IMX462_WINWH_LSB 0x3042
 #define IMX462_WINWH_MSB 0x3043
-#define IMX462_WINWV_LSB 0x303e
-#define IMX462_WINWV_MSB 0x303f
-#define IMX462_XSOUTSEL	 0x304b
+#define IMX462_WINWV_LSB 0x303E
+#define IMX462_WINWV_MSB 0x303F
+#define IMX462_XSOUTSEL	 0x304B
 
 #define IMX462_EXTCK_FREQ_LSB 0x3444
 #define IMX462_EXTCK_FREQ_MSB 0x3445
 #define IMX462_INCKSEL7       0x3480
 
-#define IMX462_INCKSEL1 0x305c
-#define IMX462_INCKSEL2 0x305d
-#define IMX462_INCKSEL3 0x305e
-#define IMX462_INCKSEL4 0x305f
-#define IMX462_INCKSEL5 0x315e
+#define IMX462_INCKSEL1 0x305C
+#define IMX462_INCKSEL2 0x305D
+#define IMX462_INCKSEL3 0x305E
+#define IMX462_INCKSEL4 0x305F
+#define IMX462_INCKSEL5 0x315E
 #define IMX462_INCKSEL6 0x3164
 
 #define IMX462_PHY_LANE_NUM  0x3407
@@ -41,9 +41,9 @@
 #define IMX462_REPETITION    0x3405
 #define IMX462_TCLKPOST		 0x3446
 #define IMX462_THSZERO		 0x3448
-#define IMX462_THSPREPARE	 0x344a
-#define IMX462_TCLKTRAIL	 0x344c
-#define IMX462_THSTRAIL		 0x344e
+#define IMX462_THSPREPARE	 0x344A
+#define IMX462_TCLKTRAIL	 0x344C
+#define IMX462_THSTRAIL		 0x344E
 #define IMX462_TCLKZERO		 0x3450
 #define IMX462_TCLKPREPARE	 0x3452
 #define IMX462_TLPX			 0x3454
@@ -51,11 +51,11 @@
 #define IMX462_ADBIT      0x3005
 #define IMX462_OUT_CTRL   0x3046
 #define IMX462_ADBIT1     0x3129
-#define IMX462_ADBIT2     0x317c
-#define IMX462_ADBIT3     0x31ec
+#define IMX462_ADBIT2     0x317C
+#define IMX462_ADBIT3     0x31EC
 #define IMX462_CSI_DT_FMT_LSB 0x3441
 #define IMX462_CSI_DT_FMT_MSB 0x3442
-#define IMX462_BLKLEVEL   0x300a
+#define IMX462_BLKLEVEL   0x300A
 #define IMX462_OPB_SIZE_V 0x3414
 #define IMX462_X_OUT_SIZE_LSB 0x3472
 #define IMX462_X_OUT_SIZE_MSB 0x3473
@@ -65,8 +65,8 @@
 #define IMX462_GAIN 0x3014
 // #define IMX462_VMAX					CCI_REG24_LE(0x3018)
 #define IMX462_SHS1_LSB 0x3020
-#define IMX462_HMAX_LSB 0x301c
-#define IMX462_HMAX_MSB 0x301d
+#define IMX462_HMAX_LSB 0x301C
+#define IMX462_HMAX_MSB 0x301D
 
 #define imx462_reg struct reg_8
 
@@ -95,54 +95,54 @@ static imx462_reg imx462_mode_common[] = {
 	{IMX462_WINPV_LSB, 0},
 	{IMX462_WINPV_MSB, 0},
 	{IMX462_WINWH_LSB, 1948 & 0xFF},
-	{IMX462_WINWH_MSB, (1948 >> 8) & 0x07},
+	{IMX462_WINWH_MSB, (1948 >> 8) & 0xFF},
 	{IMX462_WINWV_LSB, 1097 & 0xFF},
-	{IMX462_WINWV_MSB, (1097 >> 8) & 0x07},
-	{IMX462_XSOUTSEL, 0}, /* HSYNC output enabled in original */
+	{IMX462_WINWV_MSB, (1097 >> 8) & 0xFF},
+	{IMX462_XSOUTSEL, 0x0A}, /* HSYNC output enabled in original */
 	{0x3012, 0x64},
 	{0x3013, 0x00},
 	/* imx290->model->init_regs */
-	{0x300f, 0x00},
+	{0x300F, 0x00},
 	{0x3010, 0x21},
 	{0x3011, 0x02},
 	{0x3016, 0x09},
 	{0x3070, 0x02},
 	{0x3071, 0x11},
-	{0x309b, 0x10},
-	{0x309c, 0x22},
-	{0x30a2, 0x02},
-	{0x30a6, 0x20},
-	{0x30a8, 0x20},
-	{0x30aa, 0x20},
-	{0x30ac, 0x20},
-	{0x30b0, 0x43},
-	{0x3119, 0x9e},
-	{0x311c, 0x1e},
-	{0x311e, 0x08},
+	{0x309B, 0x10},
+	{0x309C, 0x22},
+	{0x30A2, 0x02},
+	{0x30A6, 0x20},
+	{0x30A8, 0x20},
+	{0x30AA, 0x20},
+	{0x30AC, 0x20},
+	{0x30B0, 0x43},
+	{0x3119, 0x9E},
+	{0x311C, 0x1E},
+	{0x311E, 0x08},
 	{0x3128, 0x05},
-	{0x313d, 0x83},
+	{0x313D, 0x83},
 	{0x3150, 0x03},
-	{0x317e, 0x00},
-	{0x32b8, 0x50},
-	{0x32b9, 0x10},
-	{0x32ba, 0x00},
-	{0x32bb, 0x04},
-	{0x32c8, 0x50},
-	{0x32c9, 0x10},
-	{0x32ca, 0x00},
-	{0x32cb, 0x04},
-	{0x332c, 0xd3},
-	{0x332d, 0x10},
-	{0x332e, 0x0d},
+	{0x317E, 0x00},
+	{0x32B8, 0x50},
+	{0x32B9, 0x10},
+	{0x32BA, 0x00},
+	{0x32BB, 0x04},
+	{0x32C8, 0x50},
+	{0x32C9, 0x10},
+	{0x32CA, 0x00},
+	{0x32CB, 0x04},
+	{0x332C, 0xD3},
+	{0x332D, 0x10},
+	{0x332E, 0x0d},
 	{0x3358, 0x06},
-	{0x3359, 0xe1},
-	{0x335a, 0x11},
-	{0x3360, 0x1e},
+	{0x3359, 0xE1},
+	{0x335A, 0x11},
+	{0x3360, 0x1E},
 	{0x3361, 0x61},
 	{0x3362, 0x10},
-	{0x33b0, 0x50},
-	{0x33b2, 0x1a},
-	{0x33b3, 0x04},
+	{0x33B0, 0x50},
+	{0x33B2, 0x1A},
+	{0x33B3, 0x04},
 	/* imx290_set_clock */
 	{IMX462_EXTCK_FREQ_LSB, 0x20}, /* 37.125MHz */
 	{IMX462_EXTCK_FREQ_MSB, 0x25},
@@ -154,19 +154,19 @@ static imx462_reg imx462_mode_common[] = {
 	{IMX462_INCKSEL5, 0x1a},
 	{IMX462_INCKSEL6, 0x1a},
 	/* imx290_set_data_lanes */
-	{IMX462_PHY_LANE_NUM, 1}, /* 2 lanes */
-    {IMX462_CSI_LANE_MODE, 1}, /* 2 lanes */
-    {IMX462_FR_FDG_SEL, 0}, /* hcg disabled, TODO: check */
+	{IMX462_PHY_LANE_NUM, 0x01}, /* 2 lanes */
+    {IMX462_CSI_LANE_MODE, 0x01}, /* 2 lanes */
+    {IMX462_FR_FDG_SEL, 0x02}, /* lcg mode 30fps */
     /* imx290_set_csi_config */
-	{IMX462_REPETITION, 0x00},
-    {IMX462_TCLKPOST, 103},
-    {IMX462_THSZERO, 87},
-    {IMX462_THSPREPARE, 47},
-    {IMX462_TCLKTRAIL, 39},
-    {IMX462_THSTRAIL, 47},
-    {IMX462_TCLKZERO, 191},
-    {IMX462_TCLKPREPARE, 47},
-	{IMX462_TLPX, 39},
+	{IMX462_REPETITION, 0x10},
+    {IMX462_TCLKPOST, 0x57},
+    {IMX462_THSZERO, 0x37},
+    {IMX462_THSPREPARE, 0x1F},
+    {IMX462_TCLKTRAIL, 0x1F},
+    {IMX462_THSTRAIL, 0x1F},
+    {IMX462_TCLKZERO, 0x77},
+    {IMX462_TCLKPREPARE, 0x1F},
+	{IMX462_TLPX, 0x17},
 	{IMX462_TABLE_END, 0x00},
 };
 
@@ -184,17 +184,17 @@ static imx462_reg imx462_mode_1920x1080[] = {
 	{IMX462_BLKLEVEL, 0x3C},
 	/* imx290->current_mode->data */
 	{IMX462_WINWV_OB, 12},
-	{IMX462_OPB_SIZE_V, 10},
+	{IMX462_OPB_SIZE_V, 0x0A},
 	{IMX462_X_OUT_SIZE_LSB, 1920 & 0xFF},
-	{IMX462_X_OUT_SIZE_MSB, (1920 >> 8) & 0x1F},
+	{IMX462_X_OUT_SIZE_MSB, (1920 >> 8) & 0xFF},
 	{IMX462_Y_OUT_SIZE_LSB, 1080 & 0xFF},
-	{IMX462_Y_OUT_SIZE_MSB, (1080 >> 8) & 0x1F},
+	{IMX462_Y_OUT_SIZE_MSB, (1080 >> 8) & 0xFF},
 	/* v4l2_ctrl_handler_setup */
 	{IMX462_GAIN, 0x00},
-	// { IMX462_VMAX, 1125 },
+	// { IMX462_VMAX, 1125 }, // TODO: Default is 1125, see if needs rewriting
 	{IMX462_SHS1_LSB, 11},
-	{IMX462_HMAX_LSB, 2200 & 0xFF},
-	{IMX462_HMAX_MSB, (2200 >> 8) & 0xFF},
+	{IMX462_HMAX_LSB, 4400 & 0xFF},
+	{IMX462_HMAX_MSB, (4400 >> 8) & 0xFF},
 	{IMX462_TABLE_END, 0x0},
 };
 
