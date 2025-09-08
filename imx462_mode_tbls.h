@@ -68,8 +68,6 @@
 #define IMX462_HMAX_LSB 0x301C
 #define IMX462_HMAX_MSB 0x301D
 
-#define IMX462_PGCTRL 0x308C
-
 #define imx462_reg struct reg_8
 
 /* IMX462 Start Streaming */
@@ -203,7 +201,6 @@ static imx462_reg imx462_mode_1920x1080[] = {
 static imx462_reg imx462_mode_test_pattern[] = {
 	{IMX462_BLKLEVEL, 0x00},
 	{IMX462_TABLE_WAIT_MS, IMX462_WAIT_MS*10},
-	{IMX462_PGCTRL, 0x23},
 };
 
 enum {

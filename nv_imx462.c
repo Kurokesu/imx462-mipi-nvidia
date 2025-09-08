@@ -46,6 +46,13 @@
 #define IMX462_MASK_LSB_2_BITS			0x03
 #define IMX462_MASK_LSB_8_BITS			0xFF
 
+/* Test pattern generator */
+#define IMX462_PGCTRL 			0x308C
+#define IMX462_PGCTRL_REGEN		BIT(0)
+#define IMX462_PGCTRL_THRU		BIT(1)
+#define IMX462_PGCTRL_MODE(n)	((n) << 4)
+
+
 static const struct of_device_id imx462_of_match[] = {
 	{.compatible = "sony,imx462",},
 	{},
@@ -671,6 +678,7 @@ static int imx462_set_mode(struct tegracam_device *tc_dev)
 
 static int imx462_start_streaming(struct tegracam_device *tc_dev)
 {
+	struct camera_common_data *s_data = tc_dev->s_data;
 	struct imx462 *priv = (struct imx462 *)tegracam_get_privdata(tc_dev);
 	int err = 0;
 
@@ -678,8 +686,16 @@ static int imx462_start_streaming(struct tegracam_device *tc_dev)
 
 	if (test_mode) {
 		dev_dbg(tc_dev->dev, "Test mode %d\n", test_mode);
+
 		err = imx462_write_table(priv,
 			mode_table[IMX462_MODE_TEST_PATTERN]);
+		if (err)
+			return err;
+
+		err = imx462_write_reg(s_data, IMX462_PGCTRL,
+								IMX462_PGCTRL_REGEN |
+								IMX462_PGCTRL_THRU |
+								IMX462_PGCTRL_MODE(test_mode));
 		if (err)
 			return err;
 	}
