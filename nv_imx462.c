@@ -17,7 +17,6 @@
 #include "../platform/tegra/camera/camera_gpio.h"
 #include "imx462_mode_tbls.h"
 
-
 #define IMX462_SENSOR_INTERNAL_CLK_FREQ   840000000
 
 /* IMX462 Register Definitions */
@@ -53,6 +52,9 @@ static const struct of_device_id imx462_of_match[] = {
 };
 
 MODULE_DEVICE_TABLE(of, imx462_of_match);
+
+static int test_mode;
+module_param(test_mode, int, 0644);
 
 static const u32 ctrl_cid_list[] = {
 	TEGRA_CAMERA_CID_GAIN,
@@ -670,8 +672,18 @@ static int imx462_set_mode(struct tegracam_device *tc_dev)
 static int imx462_start_streaming(struct tegracam_device *tc_dev)
 {
 	struct imx462 *priv = (struct imx462 *)tegracam_get_privdata(tc_dev);
+	int err = 0;
 
 	dev_dbg(tc_dev->dev, "%s:\n", __func__);
+
+	if (test_mode) {
+		dev_dbg(tc_dev->dev, "Test mode %d\n", test_mode);
+		err = imx462_write_table(priv,
+			mode_table[IMX462_MODE_TEST_PATTERN]);
+		if (err)
+			return err;
+	}
+
 	return imx462_write_table(priv, mode_table[IMX462_START_STREAM]);
 }
 
