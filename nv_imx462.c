@@ -33,6 +33,12 @@
 
 #define IMX462_GAIN_ADDR 0x3014
 
+#define IMX462_GROUP_HOLD_ADDR	0x3001
+
+/* TODO: IMX462 has no model ID. We read a registers with known values. */
+#define IMX462_MODEL_ID_ADDR_MSB	0x3004
+#define IMX462_MODEL_ID_ADDR_LSB	0x3008
+
 /* Test pattern generator */
 #define IMX462_PGCTRL 			0x308C
 #define IMX462_PGCTRL_REGEN		BIT(0)
@@ -93,7 +99,7 @@ static inline void imx462_get_vmax_regs(imx462_reg *regs,
 }
 
 static inline void imx462_get_coarse_time_regs_shs1(imx462_reg *regs,
-						     u32 coarse_time)
+				u32 coarse_time)
 {
 	regs->addr = IMX462_COARSE_TIME_SHS1_ADDR_MSB;
 	regs->val = (coarse_time >> 16) & 0x0f;
@@ -160,18 +166,15 @@ static int imx462_set_group_hold(struct tegracam_device *tc_dev, bool val)
 {
 	struct camera_common_data *s_data = tc_dev->s_data;
 	struct device *dev = tc_dev->dev;
-	int err;
-
-	dev_dbg(dev, "%s: Setting group hold control to: %u\n", __func__, val);
+	int err = 0;
 
 	err = imx462_write_reg(s_data, IMX462_GROUP_HOLD_ADDR, val);
-	if (err) {
-		dev_err(dev, "%s: Group hold control error\n", __func__);
-		return err;
-	}
+	if (err)
+		dev_dbg(dev, "%s: Group hold control error\n", __func__);
 
-	return 0;
+	return err;
 }
+
 
 static int imx462_set_coarse_time(struct imx462 *priv, s64 val)
 {
@@ -212,7 +215,7 @@ static int imx462_set_coarse_time(struct imx462 *priv, s64 val)
 	for (i = 0; i < 3; i++) {
 		err = imx462_write_reg(priv->s_data, reg_list[i].addr,
 			 reg_list[i].val);
-	if (err)
+		if (err)
 			goto fail;
 	}
 
@@ -228,7 +231,7 @@ static int imx462_set_gain(struct tegracam_device *tc_dev, s64 val)
 	struct camera_common_data *s_data = tc_dev->s_data;
 	struct device *dev = s_data->dev;
 	const struct sensor_mode_properties *mode =
-	    &s_data->sensor_props.sensor_modes[s_data->mode_prop_idx];
+		&s_data->sensor_props.sensor_modes[s_data->mode_prop_idx];
 	imx462_reg reg_list[1];
 	int err = 0;
 	u8 gain;
