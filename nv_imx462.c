@@ -27,16 +27,9 @@
 #define IMX462_VMAX_ADDR_MID 0x3019
 #define IMX462_VMAX_ADDR_MSB 0x301A
 
-/* TODO: IMX462 has no model ID. We read a registers with known values. */
-#define IMX462_MODEL_ID_ADDR_MSB		0x3004
-#define IMX462_MODEL_ID_ADDR_LSB		0x3008
-
-#define IMX462_ANALOG_GAIN_C0			0x10
-#define IMX462_MIN_GAIN			0x10
-#define IMX462_MAX_GAIN			0xF0
-#define IMX462_SHIFT_8_BITS			8
-#define IMX462_MASK_LSB_2_BITS			0x03
-#define IMX462_MASK_LSB_8_BITS			0xFF
+#define IMX462_COARSE_TIME_SHS1_ADDR_LSB 0x3020
+#define IMX462_COARSE_TIME_SHS1_ADDR_MID 0x3021
+#define IMX462_COARSE_TIME_SHS1_ADDR_MSB 0x3022
 
 /* Test pattern generator */
 #define IMX462_PGCTRL 			0x308C
@@ -70,7 +63,6 @@ enum imx462_Config {
 struct imx462 {
 	struct i2c_client *i2c_client;
 	struct v4l2_subdev *subdev;
-	u16 fine_integ_time;
 	u32 frame_length;
 	struct camera_common_data *s_data;
 	struct tegracam_device *tc_dev;
@@ -98,13 +90,17 @@ static inline void imx462_get_vmax_regs(imx462_reg *regs,
 	(regs + 2)->val = (vmax) & 0xff;
 }
 
-static inline void imx462_get_coarse_integ_time_regs(imx462_reg *regs,
+static inline void imx462_get_coarse_time_regs_shs1(imx462_reg *regs,
 						     u32 coarse_time)
 {
-	regs->addr = IMX462_COARSE_INTEG_TIME_ADDR_MSB;
-	regs->val = (coarse_time >> 8) & 0xff;
-	(regs + 1)->addr = IMX462_COARSE_INTEG_TIME_ADDR_LSB;
-	(regs + 1)->val = (coarse_time) & 0xff;
+	regs->addr = IMX462_COARSE_TIME_SHS1_ADDR_MSB;
+	regs->val = (coarse_time >> 16) & 0x0f;
+
+	(regs + 1)->addr = IMX462_COARSE_TIME_SHS1_ADDR_MID;
+	(regs + 1)->val = (coarse_time >> 8) & 0xff;
+
+	(regs + 2)->addr = IMX462_COARSE_TIME_SHS1_ADDR_LSB;
+	(regs + 2)->val = (coarse_time) & 0xff;
 }
 
 static inline void imx462_get_gain_reg(imx462_reg *reg, u16 gain)
@@ -177,25 +173,53 @@ static int imx462_set_group_hold(struct tegracam_device *tc_dev, bool val)
 	return 0;
 }
 
-static int imx462_get_fine_integ_time(struct imx462 *priv, u16 *fine_time)
+static int imx462_set_coarse_time(struct imx462 *priv, s64 val)
 {
 	struct camera_common_data *s_data = priv->s_data;
+	const struct sensor_mode_properties *mode =
+		&s_data->sensor_props.sensor_modes[s_data->mode];
+	struct device *dev = priv->tc_dev->dev;
+	imx462_reg reg_list[3];
 	int err = 0;
-	u8 reg_val[2];
+	u32 coarse_time_shs1;
+	u32 reg_shs1;
+	int i = 0;
 
-	err = imx462_read_reg(s_data, IMX462_FINE_INTEG_TIME_ADDR_MSB,
-			      &reg_val[0]);
+	if (mode->control_properties.exposure_factor == 0 ||
+		mode->image_properties.line_length == 0) {
+		dev_err(dev, "%s:error line_len = %d, exposure_factor = %d\n",
+			__func__,
+			mode->control_properties.exposure_factor,
+			mode->image_properties.line_length);
+		err = -EINVAL;
+		goto fail;
+	}
+
+	coarse_time_shs1 = mode->signal_properties.pixel_clock.val *
+		val / mode->image_properties.line_length /
+		mode->control_properties.exposure_factor;
+
+	if (priv->frame_length == 0)
+		priv->frame_length = IMX462_MIN_FRAME_LENGTH;
+
+	reg_shs1 = priv->frame_length - coarse_time_shs1 - 1;
+
+	dev_dbg(dev, "%s: coarse1:%d, shs1:%d, FL:%d\n", __func__,
+		 coarse_time_shs1, reg_shs1, priv->frame_length);
+
+	imx462_get_coarse_time_regs_shs1(reg_list, reg_shs1);
+
+	for (i = 0; i < 3; i++) {
+		err = imx462_write_reg(priv->s_data, reg_list[i].addr,
+			 reg_list[i].val);
 	if (err)
-		goto done;
+			goto fail;
+	}
 
-	err = imx462_read_reg(s_data, IMX462_FINE_INTEG_TIME_ADDR_LSB,
-			      &reg_val[1]);
-	if (err)
-		goto done;
+	return 0;
 
-	*fine_time = (reg_val[0] << 8) | reg_val[1];
-
-done:
+fail:
+	dev_dbg(dev, "%s: set coarse time error\n", __func__);
 	return err;
 }
 
@@ -301,58 +325,16 @@ static int imx462_set_frame_rate(struct tegracam_device *tc_dev, s64 val)
 
 static int imx462_set_exposure(struct tegracam_device *tc_dev, s64 val)
 {
-	struct camera_common_data *s_data = tc_dev->s_data;
 	struct imx462 *priv = (struct imx462 *)tc_dev->priv;
 	struct device *dev = tc_dev->dev;
-	const struct sensor_mode_properties *mode =
-	    &s_data->sensor_props.sensor_modes[s_data->mode_prop_idx];
-
 	int err = 0;
-	imx462_reg ct_regs[2];
 
-	const s32 max_coarse_time = priv->frame_length - IMX462_MAX_COARSE_DIFF;
-	s32 fine_integ_time_factor;
-	u32 coarse_time;
-	int i;
+	dev_dbg(dev, "%s: val: %lld\n", __func__, val);
 
-	if (mode->signal_properties.pixel_clock.val == 0 ||
-		 mode->control_properties.exposure_factor == 0 ||
-		 mode->image_properties.line_length == 0)
-		return -EINVAL;
-
-	fine_integ_time_factor = priv->fine_integ_time *
-		mode->control_properties.exposure_factor /
-		IMX462_SENSOR_INTERNAL_CLK_FREQ;
-
-	dev_dbg(dev, "%s: Setting exposure control to: %lld\n", __func__, val);
-
-	coarse_time = (val - fine_integ_time_factor)
-	    * IMX462_SENSOR_INTERNAL_CLK_FREQ
-	    / mode->control_properties.exposure_factor
-	    / mode->image_properties.line_length;
-
-	if (coarse_time < IMX462_MIN_COARSE_EXPOSURE)
-		coarse_time = IMX462_MIN_COARSE_EXPOSURE;
-	else if (coarse_time > max_coarse_time) {
-		coarse_time = max_coarse_time;
+	err = imx462_set_coarse_time(priv, val);
+	if (err)
 		dev_dbg(dev,
-			"%s: exposure limited by frame_length: %d [lines]\n",
-			__func__, max_coarse_time);
-	}
-
-	dev_dbg(dev, "%s: val: %lld [us], coarse_time: %d [lines]\n",
-		__func__, val, coarse_time);
-
-	imx462_get_coarse_integ_time_regs(ct_regs, coarse_time);
-
-	for (i = 0; i < 2; i++) {
-		err = imx462_write_reg(s_data, ct_regs[i].addr, ct_regs[i].val);
-		if (err) {
-			dev_dbg(dev,
-				"%s: coarse_time control error\n", __func__);
-			return err;
-		}
-	}
+		"%s: error coarse time SHS1 override\n", __func__);
 
 	return err;
 }
