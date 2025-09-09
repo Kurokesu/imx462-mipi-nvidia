@@ -17,23 +17,15 @@
 #include "../platform/tegra/camera/camera_gpio.h"
 #include "imx462_mode_tbls.h"
 
-#define IMX462_SENSOR_INTERNAL_CLK_FREQ   840000000
-
 /* IMX462 Register Definitions */
 #define IMX462_MIN_FRAME_LENGTH		(1125)
 #define IMX462_MAX_FRAME_LENGTH		(0x1FFFF)
 #define IMX462_MIN_COARSE_EXPOSURE	(1)
 #define IMX462_MAX_COARSE_DIFF		(4)
 
-#define IMX462_FRAME_LENGTH_ADDR_MSB		0x0340
-#define IMX462_FRAME_LENGTH_ADDR_LSB		0x0341
-#define IMX462_COARSE_INTEG_TIME_ADDR_MSB	0x0202
-#define IMX462_COARSE_INTEG_TIME_ADDR_LSB	0x0203
-#define IMX462_FINE_INTEG_TIME_ADDR_MSB	0x0200
-#define IMX462_FINE_INTEG_TIME_ADDR_LSB	0x0201
-#define IMX462_ANALOG_GAIN_ADDR_MSB		0x0204
-#define IMX462_ANALOG_GAIN_ADDR_LSB		0x0205
-#define IMX462_GROUP_HOLD_ADDR			0x0104
+#define IMX462_VMAX_ADDR_LSB 0x3018
+#define IMX462_VMAX_ADDR_MID 0x3019
+#define IMX462_VMAX_ADDR_MSB 0x301A
 
 /* TODO: IMX462 has no model ID. We read a registers with known values. */
 #define IMX462_MODEL_ID_ADDR_MSB		0x3004
@@ -93,13 +85,17 @@ static const struct regmap_config sensor_regmap_config = {
 	.use_single_write = true,
 };
 
-static inline void imx462_get_frame_length_regs(imx462_reg *regs,
-						u32 frame_length)
+static inline void imx462_get_vmax_regs(imx462_reg *regs,
+						u32 vmax)
 {
-	regs->addr = IMX462_FRAME_LENGTH_ADDR_MSB;
-	regs->val = (frame_length >> 8) & 0xff;
-	(regs + 1)->addr = IMX462_FRAME_LENGTH_ADDR_LSB;
-	(regs + 1)->val = (frame_length) & 0xff;
+	regs->addr = IMX462_VMAX_ADDR_MSB;
+	regs->val = (vmax >> 16) & 0x0f;
+
+	(regs + 1)->addr = IMX462_VMAX_ADDR_MID;
+	(regs + 1)->val = (vmax >> 8) & 0xff;
+
+	(regs + 2)->addr = IMX462_VMAX_ADDR_LSB;
+	(regs + 2)->val = (vmax) & 0xff;
 }
 
 static inline void imx462_get_coarse_integ_time_regs(imx462_reg *regs,
@@ -261,8 +257,8 @@ static int imx462_set_frame_rate(struct tegracam_device *tc_dev, s64 val)
 	    &s_data->sensor_props.sensor_modes[s_data->mode_prop_idx];
 
 	int err = 0;
-	imx462_reg fl_regs[2];
-	u32 frame_length;
+	imx462_reg vmax_regs[3];
+	u32 vmax;
 	int i;
 
 	dev_dbg(dev, "%s: Setting framerate control to: %lld\n", __func__, val);
@@ -270,22 +266,27 @@ static int imx462_set_frame_rate(struct tegracam_device *tc_dev, s64 val)
 	if (val == 0 || mode->image_properties.line_length == 0)
 		return -EINVAL;
 
-	frame_length = (u32) (IMX462_SENSOR_INTERNAL_CLK_FREQ *
-			      (u64) mode->control_properties.framerate_factor /
-			      mode->image_properties.line_length / val);
+	vmax = mode->signal_properties.pixel_clock.val *
+		mode->control_properties.framerate_factor /
+		mode->image_properties.line_length / val;
 
-	if (frame_length < IMX462_MIN_FRAME_LENGTH)
-		frame_length = IMX462_MIN_FRAME_LENGTH;
-	else if (frame_length > IMX462_MAX_FRAME_LENGTH)
-		frame_length = IMX462_MAX_FRAME_LENGTH;
+	dev_dbg(dev, "pixel_clock %lld\n", mode->signal_properties.pixel_clock.val);
+	dev_dbg(dev, "framerate_factor %d\n", mode->control_properties.framerate_factor);
+	dev_dbg(dev, "line_length %d\n", mode->image_properties.line_length);
+	dev_dbg(dev, "vmax %d\n", vmax);
+
+	if (vmax < IMX462_MIN_FRAME_LENGTH)
+		vmax = IMX462_MIN_FRAME_LENGTH;
+	else if (vmax > IMX462_MAX_FRAME_LENGTH)
+		vmax = IMX462_MAX_FRAME_LENGTH;
 
 	dev_dbg(dev,
-		"%s: val: %llde-6 [fps], frame_length: %u [lines]\n",
-		__func__, val, frame_length);
+		"%s: val: %llde-6 [fps], vmax: %u [lines]\n",
+		__func__, val, vmax);
 
-	imx462_get_frame_length_regs(fl_regs, frame_length);
-	for (i = 0; i < 2; i++) {
-		err = imx462_write_reg(s_data, fl_regs[i].addr, fl_regs[i].val);
+	imx462_get_vmax_regs(vmax_regs, vmax);
+	for (i = 0; i < 3; i++) {
+		err = imx462_write_reg(s_data, vmax_regs[i].addr, vmax_regs[i].val);
 		if (err) {
 			dev_err(dev,
 				"%s: frame_length control error\n", __func__);
@@ -293,7 +294,7 @@ static int imx462_set_frame_rate(struct tegracam_device *tc_dev, s64 val)
 		}
 	}
 
-	priv->frame_length = frame_length;
+	priv->frame_length = vmax;
 
 	return err;
 }
@@ -764,12 +765,6 @@ static int imx462_board_setup(struct imx462 *priv)
 	if (!((reg_val[0] == 0x10) && reg_val[1] == 0xA0))
 		dev_err(dev, "%s: invalid sensor model id: %x%x\n",
 			__func__, reg_val[0], reg_val[1]);
-
-	/* Sensor fine integration time */
-	err = imx462_get_fine_integ_time(priv, &priv->fine_integ_time);
-	if (err)
-		dev_err(dev, "%s: error querying sensor fine integ. time\n",
-			__func__);
 
 err_reg_probe:
 	imx462_power_off(s_data);
