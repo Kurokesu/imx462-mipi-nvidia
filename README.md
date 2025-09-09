@@ -2,7 +2,7 @@
 
 Compatible with NVIDIA Jetson Linux 36.4.4
 
-## Quick test
+## Quick start
 
 Pre-built driver files are provided in [./pre-built](./pre-built) directory.
 
@@ -39,6 +39,19 @@ sudo dmesg | grep imx462
 ```
 ![dmesg-imx462](./img/dmesg.png "dmesg-imx462")
 
+### GStreamer
+```bash
+gst-launch-1.0 -e nvarguscamerasrc sensor-id=0 ! \
+   'video/x-raw(memory:NVMM),width=1920,height=1080,framerate=30/1' ! \
+   queue ! nvvidconv ! queue ! nveglglessink
+```
+
+### NVIDIA sample camera capture application
+```bash
+nvgstcapture-1.0 --sensor-id 0
+```
+
+### Raw v4l2
 Stream raw data to file:
 ```bash
 v4l2-ctl -d /dev/video0 --set-fmt-video=width=1920,height=1080,pixelformat=RG10 --stream-mmap --stream-to imx462_1080p.raw --stream-count=1 --stream-skip=10 --verbose
