@@ -253,13 +253,13 @@
 								inherent_gain = "1";
 								mclk_multiplier = "4";
 								pix_clk_hz = "148500000";
-								gain_factor = "16";
+								gain_factor = "10";
 								framerate_factor = "1000000";
 								exposure_factor = "1000000";
-								min_gain_val = "16"; /* 1.00x */
-								max_gain_val = "240"; /* 15x */
+								min_gain_val = "0"; /* 0dB */
+								max_gain_val = "240"; /* 24dB */
 								step_gain_val = "1";
-								default_gain = "16"; /* 1.00x */
+								default_gain = "0"; /* 0dB */
 								min_hdr_ratio = "1";
 								max_hdr_ratio = "1";
 								min_framerate = "2000000"; /* 2.0 fps */
