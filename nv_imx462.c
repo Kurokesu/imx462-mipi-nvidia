@@ -31,6 +31,8 @@
 #define IMX462_COARSE_TIME_SHS1_ADDR_MID 0x3021
 #define IMX462_COARSE_TIME_SHS1_ADDR_MSB 0x3022
 
+#define IMX462_GAIN_ADDR 0x3014
+
 /* Test pattern generator */
 #define IMX462_PGCTRL 			0x308C
 #define IMX462_PGCTRL_REGEN		BIT(0)
@@ -103,13 +105,11 @@ static inline void imx462_get_coarse_time_regs_shs1(imx462_reg *regs,
 	(regs + 2)->val = (coarse_time) & 0xff;
 }
 
-static inline void imx462_get_gain_reg(imx462_reg *reg, u16 gain)
+static inline void imx462_get_gain_reg(imx462_reg *regs,
+				u8 gain)
 {
-	reg->addr = IMX462_ANALOG_GAIN_ADDR_MSB;
-	reg->val = (gain >> IMX462_SHIFT_8_BITS) & IMX462_MASK_LSB_2_BITS;
-
-	(reg + 1)->addr = IMX462_ANALOG_GAIN_ADDR_LSB;
-	(reg + 1)->val = (gain) & IMX462_MASK_LSB_8_BITS;
+	regs->addr = IMX462_GAIN_ADDR;
+	regs->val = gain;
 }
 
 static inline int imx462_read_reg(struct camera_common_data *s_data,
@@ -229,45 +229,25 @@ static int imx462_set_gain(struct tegracam_device *tc_dev, s64 val)
 	struct device *dev = s_data->dev;
 	const struct sensor_mode_properties *mode =
 	    &s_data->sensor_props.sensor_modes[s_data->mode_prop_idx];
-	int err = 0, i = 0;
-	imx462_reg gain_reg[2];
-	s16 gain;
+	imx462_reg reg_list[1];
+	int err = 0;
+	u8 gain;
 
-	dev_dbg(dev, "%s: Setting gain control to: %lld\n", __func__, val);
-
-	if (val < mode->control_properties.min_gain_val)
-		val = mode->control_properties.min_gain_val;
-	else if (val > mode->control_properties.max_gain_val)
-		val = mode->control_properties.max_gain_val;
-
-	/* Gain Formula:
-	 * Gain = (IMX462_GAIN_C0 - (IMX462_GAIN_C0 * gain_factor / val))
-	 */
-	if (val == 0)
+	if (mode->control_properties.gain_factor == 0) {
+		dev_err(dev, "%s:error, gain_factor is 0\n", __func__);
 		return -EINVAL;
-	gain =
-	    (s16) (IMX462_ANALOG_GAIN_C0 -
-		   (mode->control_properties.gain_factor *
-		    IMX462_ANALOG_GAIN_C0 / val));
-
-	if (gain < IMX462_MIN_GAIN)
-		gain = IMX462_MAX_GAIN;
-	else if (gain > IMX462_MAX_GAIN)
-		gain = IMX462_MAX_GAIN;
-
-	dev_dbg(dev, "%s: val: %lld (/%d) [times], gain: %u\n",
-		__func__, val, mode->control_properties.gain_factor, gain);
-
-	imx462_get_gain_reg(gain_reg, (u16) gain);
-
-	for (i = 0; i < ARRAY_SIZE(gain_reg); i++) {
-		err = imx462_write_reg(s_data, gain_reg[i].addr,
-				       gain_reg[i].val);
-		if (err) {
-			dev_err(dev, "%s: gain control error\n", __func__);
-			break;
-		}
 	}
+
+	/* translate value */
+	gain = (u8) (val * 160 / (48 * mode->control_properties.gain_factor));
+	dev_dbg(dev, "%s: gain reg: %d\n",  __func__, gain);
+
+	imx462_get_gain_reg(reg_list, gain);
+
+	err = imx462_write_reg(s_data, reg_list[0].addr,
+		 reg_list[0].val);
+	if (err)
+		dev_dbg(dev, "%s: GAIN control error\n", __func__);
 
 	return err;
 }
