@@ -248,7 +248,7 @@
 								mode_type = "bayer";
 								pixel_phase = "rggb";
 								csi_pixel_bit_depth = "10";
-								readout_orientation = "90";
+								readout_orientation = "0";
 								line_length = "4400";
 								inherent_gain = "1";
 								mclk_multiplier = "4";
