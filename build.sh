@@ -9,12 +9,12 @@ export CROSS_COMPILE=$HOME/l4t-gcc/aarch64--glibc--stable-2022.08-1/bin/aarch64-
 export KERNEL_HEADERS=$KERNEL_SRC_DIR/kernel/kernel-jammy-src
 
 echo "Copying driver files to $KERNEL_SRC_DIR/nvidia-oot/drivers/media/i2c"
-cp ./make-files/Makefile-drivers $KERNEL_SRC_DIR/nvidia-oot/drivers/media/i2c/Makefile
+cp ./makefiles/Makefile-drivers $KERNEL_SRC_DIR/nvidia-oot/drivers/media/i2c/Makefile
 cp ./nv_imx462.c $KERNEL_SRC_DIR/nvidia-oot/drivers/media/i2c
 cp ./imx462_mode_tbls.h $KERNEL_SRC_DIR/nvidia-oot/drivers/media/i2c
 
 echo "Copying device-tree files to $KERNEL_SRC_DIR//hardware/nvidia/t23x/nv-public/overlay"
-cp ./make-files/Makefile-overlays $KERNEL_SRC_DIR//hardware/nvidia/t23x/nv-public/overlay/Makefile
+cp ./makefiles/Makefile-overlays $KERNEL_SRC_DIR//hardware/nvidia/t23x/nv-public/overlay/Makefile
 cp ./tegra234-p3767-camera-p3768-imx462-A.dts $KERNEL_SRC_DIR//hardware/nvidia/t23x/nv-public/overlay
 
 echo "Building loadable imx462 kernel module"
