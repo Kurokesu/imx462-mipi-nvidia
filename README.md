@@ -133,7 +133,7 @@ cd Linux_for_Tegra/source/
 Export build variables:
 ```bash
 export CROSS_COMPILE=$HOME/l4t-gcc/aarch64--glibc--stable-2022.08-1/bin/aarch64-buildroot-linux-gnu-
-export KERNEL_HEADERS=$PWD/kernel/kernel-jammy-src
+export KERNEL_HEADERS=$HOME/Linux_for_Tegra/source/kernel/kernel-jammy-src
 ```
 
 Build the kernel:
@@ -154,6 +154,7 @@ make dtbs
 Now that the default kernel build is ready, we can add imx462 driver sources and build them using `build.sh` script.
 Make script executable:
 ```bash
+cd <imx462-mipi-nvidia repo dir>
 chmod +x ./build.sh 
 ```
 
