@@ -18,10 +18,10 @@
 #include "imx462_mode_tbls.h"
 
 /* IMX462 Register Definitions */
-#define IMX462_MIN_FRAME_LENGTH		(1125)
-#define IMX462_MAX_FRAME_LENGTH		(0x1FFFF)
-#define IMX462_MIN_COARSE_EXPOSURE	(1)
-#define IMX462_MAX_COARSE_DIFF		(4)
+#define IMX462_MIN_FRAME_LENGTH (1125)
+#define IMX462_MAX_FRAME_LENGTH (0x1FFFF)
+#define IMX462_MIN_COARSE_EXPOSURE (1)
+#define IMX462_MAX_COARSE_DIFF (4)
 
 #define IMX462_VMAX_ADDR_LSB 0x3018
 #define IMX462_VMAX_ADDR_MID 0x3019
@@ -33,21 +33,20 @@
 
 #define IMX462_GAIN_ADDR 0x3014
 
-#define IMX462_GROUP_HOLD_ADDR	0x3001
+#define IMX462_GROUP_HOLD_ADDR 0x3001
 
 /* TODO: IMX462 has no model ID. We read a registers with known values. */
-#define IMX462_MODEL_ID_ADDR_MSB	0x3004
-#define IMX462_MODEL_ID_ADDR_LSB	0x3008
+#define IMX462_MODEL_ID_ADDR_MSB 0x3004
+#define IMX462_MODEL_ID_ADDR_LSB 0x3008
 
 /* Test pattern generator */
-#define IMX462_PGCTRL 			0x308C
-#define IMX462_PGCTRL_REGEN		BIT(0)
-#define IMX462_PGCTRL_THRU		BIT(1)
-#define IMX462_PGCTRL_MODE(n)	((n) << 4)
-
+#define IMX462_PGCTRL 0x308C
+#define IMX462_PGCTRL_REGEN BIT(0)
+#define IMX462_PGCTRL_THRU BIT(1)
+#define IMX462_PGCTRL_MODE(n) ((n) << 4)
 
 static const struct of_device_id imx462_of_match[] = {
-	{.compatible = "sony,imx462",},
+	{ .compatible = "sony,imx462" },
 	{},
 };
 
@@ -85,8 +84,7 @@ static const struct regmap_config sensor_regmap_config = {
 	.use_single_write = true,
 };
 
-static inline void imx462_get_vmax_regs(imx462_reg *regs,
-						u32 vmax)
+static inline void imx462_get_vmax_regs(imx462_reg *regs, u32 vmax)
 {
 	regs->addr = IMX462_VMAX_ADDR_MSB;
 	regs->val = (vmax >> 16) & 0x0f;
@@ -95,11 +93,11 @@ static inline void imx462_get_vmax_regs(imx462_reg *regs,
 	(regs + 1)->val = (vmax >> 8) & 0xff;
 
 	(regs + 2)->addr = IMX462_VMAX_ADDR_LSB;
-	(regs + 2)->val = (vmax) & 0xff;
+	(regs + 2)->val = (vmax)&0xff;
 }
 
 static inline void imx462_get_coarse_time_regs_shs1(imx462_reg *regs,
-				u32 coarse_time)
+						    u32 coarse_time)
 {
 	regs->addr = IMX462_COARSE_TIME_SHS1_ADDR_MSB;
 	regs->val = (coarse_time >> 16) & 0x0f;
@@ -108,18 +106,17 @@ static inline void imx462_get_coarse_time_regs_shs1(imx462_reg *regs,
 	(regs + 1)->val = (coarse_time >> 8) & 0xff;
 
 	(regs + 2)->addr = IMX462_COARSE_TIME_SHS1_ADDR_LSB;
-	(regs + 2)->val = (coarse_time) & 0xff;
+	(regs + 2)->val = (coarse_time)&0xff;
 }
 
-static inline void imx462_get_gain_reg(imx462_reg *regs,
-				u8 gain)
+static inline void imx462_get_gain_reg(imx462_reg *regs, u8 gain)
 {
 	regs->addr = IMX462_GAIN_ADDR;
 	regs->val = gain;
 }
 
-static inline int imx462_read_reg(struct camera_common_data *s_data,
-				  u16 addr, u8 *val)
+static inline int imx462_read_reg(struct camera_common_data *s_data, u16 addr,
+				  u8 *val)
 {
 	int err = 0;
 	u32 reg_val = 0;
@@ -130,8 +127,8 @@ static inline int imx462_read_reg(struct camera_common_data *s_data,
 	return err;
 }
 
-static inline int imx462_write_reg(struct camera_common_data *s_data,
-				   u16 addr, u8 val)
+static inline int imx462_write_reg(struct camera_common_data *s_data, u16 addr,
+				   u8 val)
 {
 	int err = 0;
 
@@ -146,19 +143,20 @@ static inline int imx462_write_reg(struct camera_common_data *s_data,
 static int imx462_write_table(struct imx462 *priv, const imx462_reg table[])
 {
 	int err;
-	
+
 	dev_dbg(priv->s_data->dev, "%s: Writing register table\n", __func__);
-	
+
 	err = regmap_util_write_table_8(priv->s_data->regmap, table, NULL, 0,
-					 IMX462_TABLE_WAIT_MS,
-					 IMX462_TABLE_END);
-	
+					IMX462_TABLE_WAIT_MS, IMX462_TABLE_END);
+
 	if (err) {
-		dev_err(priv->s_data->dev, "%s: Failed to write table (%d)\n", __func__, err);
+		dev_err(priv->s_data->dev, "%s: Failed to write table (%d)\n",
+			__func__, err);
 	} else {
-		dev_dbg(priv->s_data->dev, "%s: Register table written successfully\n", __func__);
+		dev_dbg(priv->s_data->dev,
+			"%s: Register table written successfully\n", __func__);
 	}
-	
+
 	return err;
 }
 
@@ -175,7 +173,6 @@ static int imx462_set_group_hold(struct tegracam_device *tc_dev, bool val)
 	return err;
 }
 
-
 static int imx462_set_coarse_time(struct imx462 *priv, s64 val)
 {
 	struct camera_common_data *s_data = priv->s_data;
@@ -189,18 +186,17 @@ static int imx462_set_coarse_time(struct imx462 *priv, s64 val)
 	int i = 0;
 
 	if (mode->control_properties.exposure_factor == 0 ||
-		mode->image_properties.line_length == 0) {
+	    mode->image_properties.line_length == 0) {
 		dev_err(dev, "%s:error line_len = %d, exposure_factor = %d\n",
-			__func__,
-			mode->control_properties.exposure_factor,
+			__func__, mode->control_properties.exposure_factor,
 			mode->image_properties.line_length);
 		err = -EINVAL;
 		goto fail;
 	}
 
-	coarse_time_shs1 = mode->signal_properties.pixel_clock.val *
-		val / mode->image_properties.line_length /
-		mode->control_properties.exposure_factor;
+	coarse_time_shs1 = mode->signal_properties.pixel_clock.val * val /
+			   mode->image_properties.line_length /
+			   mode->control_properties.exposure_factor;
 
 	if (priv->frame_length == 0)
 		priv->frame_length = IMX462_MIN_FRAME_LENGTH;
@@ -208,13 +204,13 @@ static int imx462_set_coarse_time(struct imx462 *priv, s64 val)
 	reg_shs1 = priv->frame_length - coarse_time_shs1 - 1;
 
 	dev_dbg(dev, "%s: coarse1:%d, shs1:%d, FL:%d\n", __func__,
-		 coarse_time_shs1, reg_shs1, priv->frame_length);
+		coarse_time_shs1, reg_shs1, priv->frame_length);
 
 	imx462_get_coarse_time_regs_shs1(reg_list, reg_shs1);
 
 	for (i = 0; i < 3; i++) {
 		err = imx462_write_reg(priv->s_data, reg_list[i].addr,
-			 reg_list[i].val);
+				       reg_list[i].val);
 		if (err)
 			goto fail;
 	}
@@ -242,13 +238,12 @@ static int imx462_set_gain(struct tegracam_device *tc_dev, s64 val)
 	}
 
 	/* translate value */
-	gain = (u8) (val * 160 / (48 * mode->control_properties.gain_factor));
-	dev_dbg(dev, "%s: gain reg: %d\n",  __func__, gain);
+	gain = (u8)(val * 160 / (48 * mode->control_properties.gain_factor));
+	dev_dbg(dev, "%s: gain reg: %d\n", __func__, gain);
 
 	imx462_get_gain_reg(reg_list, gain);
 
-	err = imx462_write_reg(s_data, reg_list[0].addr,
-		 reg_list[0].val);
+	err = imx462_write_reg(s_data, reg_list[0].addr, reg_list[0].val);
 	if (err)
 		dev_dbg(dev, "%s: GAIN control error\n", __func__);
 
@@ -261,7 +256,7 @@ static int imx462_set_frame_rate(struct tegracam_device *tc_dev, s64 val)
 	struct imx462 *priv = (struct imx462 *)tc_dev->priv;
 	struct device *dev = tc_dev->dev;
 	const struct sensor_mode_properties *mode =
-	    &s_data->sensor_props.sensor_modes[s_data->mode_prop_idx];
+		&s_data->sensor_props.sensor_modes[s_data->mode_prop_idx];
 
 	int err = 0;
 	imx462_reg vmax_regs[3];
@@ -274,11 +269,13 @@ static int imx462_set_frame_rate(struct tegracam_device *tc_dev, s64 val)
 		return -EINVAL;
 
 	vmax = mode->signal_properties.pixel_clock.val *
-		mode->control_properties.framerate_factor /
-		mode->image_properties.line_length / val;
+	       mode->control_properties.framerate_factor /
+	       mode->image_properties.line_length / val;
 
-	dev_dbg(dev, "pixel_clock %lld\n", mode->signal_properties.pixel_clock.val);
-	dev_dbg(dev, "framerate_factor %d\n", mode->control_properties.framerate_factor);
+	dev_dbg(dev, "pixel_clock %lld\n",
+		mode->signal_properties.pixel_clock.val);
+	dev_dbg(dev, "framerate_factor %d\n",
+		mode->control_properties.framerate_factor);
 	dev_dbg(dev, "line_length %d\n", mode->image_properties.line_length);
 	dev_dbg(dev, "vmax %d\n", vmax);
 
@@ -287,16 +284,16 @@ static int imx462_set_frame_rate(struct tegracam_device *tc_dev, s64 val)
 	else if (vmax > IMX462_MAX_FRAME_LENGTH)
 		vmax = IMX462_MAX_FRAME_LENGTH;
 
-	dev_dbg(dev,
-		"%s: val: %llde-6 [fps], vmax: %u [lines]\n",
-		__func__, val, vmax);
+	dev_dbg(dev, "%s: val: %llde-6 [fps], vmax: %u [lines]\n", __func__,
+		val, vmax);
 
 	imx462_get_vmax_regs(vmax_regs, vmax);
 	for (i = 0; i < 3; i++) {
-		err = imx462_write_reg(s_data, vmax_regs[i].addr, vmax_regs[i].val);
+		err = imx462_write_reg(s_data, vmax_regs[i].addr,
+				       vmax_regs[i].val);
 		if (err) {
-			dev_err(dev,
-				"%s: frame_length control error\n", __func__);
+			dev_err(dev, "%s: frame_length control error\n",
+				__func__);
 			return err;
 		}
 	}
@@ -316,8 +313,7 @@ static int imx462_set_exposure(struct tegracam_device *tc_dev, s64 val)
 
 	err = imx462_set_coarse_time(priv, val);
 	if (err)
-		dev_dbg(dev,
-		"%s: error coarse time SHS1 override\n", __func__);
+		dev_dbg(dev, "%s: error coarse time SHS1 override\n", __func__);
 
 	return err;
 }
@@ -508,18 +504,15 @@ static int imx462_power_get(struct tegracam_device *tc_dev)
 
 	/* analog 2.8v */
 	if (pdata->regulators.avdd)
-		err |= camera_common_regulator_get(dev,
-						   &pw->avdd,
+		err |= camera_common_regulator_get(dev, &pw->avdd,
 						   pdata->regulators.avdd);
 	/* IO 1.8v */
 	if (pdata->regulators.iovdd)
-		err |= camera_common_regulator_get(dev,
-						   &pw->iovdd,
+		err |= camera_common_regulator_get(dev, &pw->iovdd,
 						   pdata->regulators.iovdd);
 	/* dig 1.2v */
 	if (pdata->regulators.dvdd)
-		err |= camera_common_regulator_get(dev,
-						   &pw->dvdd,
+		err |= camera_common_regulator_get(dev, &pw->dvdd,
 						   pdata->regulators.dvdd);
 	if (err) {
 		dev_err(dev, "%s: unable to get regulator(s)\n", __func__);
@@ -541,8 +534,8 @@ done:
 	return err;
 }
 
-static struct camera_common_pdata *imx462_parse_dt(struct tegracam_device
-						   *tc_dev)
+static struct camera_common_pdata *
+imx462_parse_dt(struct tegracam_device *tc_dev)
 {
 	struct device *dev = tc_dev->dev;
 	struct device_node *np = dev->of_node;
@@ -561,8 +554,8 @@ static struct camera_common_pdata *imx462_parse_dt(struct tegracam_device
 		return NULL;
 	}
 
-	board_priv_pdata = devm_kzalloc(dev,
-					sizeof(*board_priv_pdata), GFP_KERNEL);
+	board_priv_pdata =
+		devm_kzalloc(dev, sizeof(*board_priv_pdata), GFP_KERNEL);
 	if (!board_priv_pdata)
 		return NULL;
 
@@ -588,7 +581,7 @@ static struct camera_common_pdata *imx462_parse_dt(struct tegracam_device
 				       &board_priv_pdata->regulators.dvdd);
 	if (err)
 		dev_dbg(dev,
-		"avdd, iovdd and/or dvdd reglrs. not present, assume sensor powered independently\n");
+			"avdd, iovdd and/or dvdd reglrs. not present, assume sensor powered independently\n");
 
 	board_priv_pdata->has_eeprom = of_property_read_bool(np, "has-eeprom");
 
@@ -654,14 +647,14 @@ static int imx462_start_streaming(struct tegracam_device *tc_dev)
 		dev_dbg(tc_dev->dev, "Test mode %d\n", test_mode);
 
 		err = imx462_write_table(priv,
-			mode_table[IMX462_MODE_TEST_PATTERN]);
+					 mode_table[IMX462_MODE_TEST_PATTERN]);
 		if (err)
 			return err;
 
 		err = imx462_write_reg(s_data, IMX462_PGCTRL,
-								IMX462_PGCTRL_REGEN |
-								IMX462_PGCTRL_THRU |
-								IMX462_PGCTRL_MODE(test_mode));
+				       IMX462_PGCTRL_REGEN |
+					       IMX462_PGCTRL_THRU |
+					       IMX462_PGCTRL_MODE(test_mode));
 		if (err)
 			return err;
 	}
@@ -713,23 +706,23 @@ static int imx462_board_setup(struct imx462 *priv)
 	/* Probe sensor model id registers */
 	err = imx462_read_reg(s_data, IMX462_MODEL_ID_ADDR_MSB, &reg_val[0]);
 	if (err) {
-		dev_err(dev, "%s: error during i2c read probe (%d)\n",
-			__func__, err);
+		dev_err(dev, "%s: error during i2c read probe (%d)\n", __func__,
+			err);
 		goto err_reg_probe;
 	}
 	err = imx462_read_reg(s_data, IMX462_MODEL_ID_ADDR_LSB, &reg_val[1]);
 	if (err) {
-		dev_err(dev, "%s: error during i2c read probe (%d)\n",
-			__func__, err);
+		dev_err(dev, "%s: error during i2c read probe (%d)\n", __func__,
+			err);
 		goto err_reg_probe;
 	}
 
-	dev_dbg(dev, "%s: sensor model id: 0x%x%x\n",
-		__func__, reg_val[0], reg_val[1]);
+	dev_dbg(dev, "%s: sensor model id: 0x%x%x\n", __func__, reg_val[0],
+		reg_val[1]);
 
 	if (!((reg_val[0] == 0x10) && reg_val[1] == 0xA0))
-		dev_err(dev, "%s: invalid sensor model id: %x%x\n",
-			__func__, reg_val[0], reg_val[1]);
+		dev_err(dev, "%s: invalid sensor model id: %x%x\n", __func__,
+			reg_val[0], reg_val[1]);
 
 err_reg_probe:
 	imx462_power_off(s_data);
@@ -838,10 +831,7 @@ static void imx462_remove(struct i2c_client *client)
 #endif
 }
 
-static const struct i2c_device_id imx462_id[] = {
-	{"imx462", 0},
-	{}
-};
+static const struct i2c_device_id imx462_id[] = { { "imx462", 0 }, {} };
 
 MODULE_DEVICE_TABLE(i2c, imx462_id);
 
