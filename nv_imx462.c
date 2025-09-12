@@ -228,7 +228,7 @@ static int imx462_set_gain(struct tegracam_device *tc_dev, s64 val)
 	struct device *dev = s_data->dev;
 	const struct sensor_mode_properties *mode =
 		&s_data->sensor_props.sensor_modes[s_data->mode_prop_idx];
-	imx462_reg reg_list[1];
+	imx462_reg reg_gain;
 	int err = 0;
 	u8 gain;
 
@@ -238,12 +238,14 @@ static int imx462_set_gain(struct tegracam_device *tc_dev, s64 val)
 	}
 
 	/* translate value */
-	gain = (u8)(val * 160 / (48 * mode->control_properties.gain_factor));
+	gain = (u8)(val * 160 /
+		    (48 * mode->control_properties.gain_factor *
+		     mode->control_properties.step_gain_val));
 	dev_dbg(dev, "%s: gain reg: %d\n", __func__, gain);
 
-	imx462_get_gain_reg(reg_list, gain);
+	imx462_get_gain_reg(&reg_gain, gain);
 
-	err = imx462_write_reg(s_data, reg_list[0].addr, reg_list[0].val);
+	err = imx462_write_reg(s_data, reg_gain.addr, reg_gain.val);
 	if (err)
 		dev_dbg(dev, "%s: GAIN control error\n", __func__);
 

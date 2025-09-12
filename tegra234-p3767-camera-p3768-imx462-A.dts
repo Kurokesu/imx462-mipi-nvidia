@@ -143,7 +143,21 @@
 							physical_w = "5.62";
 							physical_h = "3.18";
 							sensor_model = "imx462";
+							/* Define any required hw resources needed by driver */
+							/* ie. clocks, io pins, power sources */
+							/* Defines number of frames to be dropped by driver internally after applying */
+							/* sensor crop settings. Some sensors send corrupt frames after applying */
+							/* crop co-ordinates */
+
+							/* Convert Gain to unit of dB (decibel) befor passing to kernel driver */
+							use_decibel_gain = "true";
+
+							/* if true, delay gain setting by one frame to be in sync with exposure */
+							delayed_gain = "true";
+
+							/* enable CID_SENSOR_MODE_ID for sensor modes selection */
 							use_sensor_mode_id = "true";
+
 							/**
 							* ==== Modes ====
 							* A modeX node is required to support v4l2 driver
@@ -257,8 +271,8 @@
 								framerate_factor = "1000000";
 								exposure_factor = "1000000";
 								min_gain_val = "0"; /* 0dB */
-								max_gain_val = "240"; /* 24dB */
-								step_gain_val = "1";
+								max_gain_val = "294"; /* 29.4dB */
+								step_gain_val = "3"; /* 0.3dB */
 								default_gain = "0"; /* 0dB */
 								min_hdr_ratio = "1";
 								max_hdr_ratio = "1";
