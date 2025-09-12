@@ -194,9 +194,10 @@ static int imx462_set_coarse_time(struct imx462 *priv, s64 val)
 		goto fail;
 	}
 
-	coarse_time_shs1 = mode->signal_properties.pixel_clock.val * val /
-			   mode->image_properties.line_length /
-			   mode->control_properties.exposure_factor;
+	coarse_time_shs1 = DIV_ROUND_CLOSEST(
+		mode->signal_properties.pixel_clock.val * val /
+			mode->image_properties.line_length,
+		mode->control_properties.exposure_factor);
 
 	if (priv->frame_length == 0)
 		priv->frame_length = IMX462_MIN_FRAME_LENGTH;

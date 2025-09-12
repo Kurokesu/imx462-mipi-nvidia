@@ -277,10 +277,10 @@
 								max_framerate = "30000000"; /* 30.0 fps */
 								step_framerate = "1";
 								default_framerate = "30000000"; /* 30.0 fps */
-								min_exp_time = "13"; /* us */
-								max_exp_time = "683709"; /* us */
+								min_exp_time = "30"; /* us */
+								max_exp_time = "33274"; /* us */
 								step_exp_time = "1";
-								default_exp_time = "2495"; /* us */
+								default_exp_time = "32978"; /* us */
 								embedded_metadata_height = "1";
 							};
 							ports {
