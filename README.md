@@ -2,7 +2,7 @@
 
 Compatible with NVIDIA Jetson Linux 36.4.4
 
-## Quick Start
+## Quickstart
 
 Prebuilt driver files are provided in [./prebuilt](./prebuilt) directory.
 
@@ -164,4 +164,4 @@ Build:
 ./build.sh
 ```
 
-Upon successful build the kernel files will be retrieved to `./build` directory. They can then be loaded onto target and used just as described in [Quick test](#quick-test).
+Upon successful build the kernel files will be retrieved to `./build` directory. They can then be loaded onto target and used just as described in [Quickstart](#quickstart).
