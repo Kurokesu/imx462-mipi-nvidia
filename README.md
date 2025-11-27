@@ -13,9 +13,9 @@ Copy device tree entry to `/boot` directory:
 cp ./prebuilt/tegra234-p3767-camera-p3768-imx462-A.dtbo /boot
 ```
 
-Copy camera calibration ISP settings file to `/var/nvidia/nvcam/settings`:
+Copy camera calibration ISP settings file to `/var/nvidia/nvcam/settings` directory:
 ```bash
-cp ./tuning/camera_overrides.isp /var/nvidia/nvcam/settings
+sudo cp ./tuning/camera_overrides.isp /var/nvidia/nvcam/settings
 ```
 
 Use Jetson-IO tool to configure 24pin CSI connector:
