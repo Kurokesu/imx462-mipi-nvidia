@@ -239,9 +239,7 @@ static int imx462_set_gain(struct tegracam_device *tc_dev, s64 val)
 	}
 
 	/* translate value */
-	gain = (u8)(val * 160 /
-		    (48 * mode->control_properties.gain_factor *
-		     mode->control_properties.step_gain_val));
+	gain = val / 3;
 	dev_dbg(dev, "%s: gain reg: %d\n", __func__, gain);
 
 	imx462_get_gain_reg(&reg_gain, gain);
