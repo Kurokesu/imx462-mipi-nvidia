@@ -1,6 +1,6 @@
 # imx462 MIPI NVIDIA driver
 
-Compatible with NVIDIA Jetson Linux 36.4.4 Jetpack 6.2.1
+Tested with NVIDIA Jetson Linux 36.4.4 (JetPack 6.2.1).
 
 ## Quickstart
 
@@ -27,7 +27,7 @@ Run setup script:
 sudo ./setup.sh
 ```
 
-Use Jetson-IO tool to configure 24pin CSI connector:
+Use the Jetson-IO tool to configure the 24-pin CSI connector:
 
 ```bash
 sudo /opt/nvidia/jetson-io/jetson-io.py
@@ -81,7 +81,7 @@ python3 view_raw.py ./imx462_1080p.raw
 
 ## Test mode
 
-Sensor has built-in test pattern generator which can be enabled for verifying data validity.
+The sensor has a built-in test pattern generator that can be used to verify data validity.
 
 After running `sudo ./setup.sh` the driver is installed and loaded automatically at boot.  
 The `test_mode` module parameter can then be controlled at runtime via sysfs:
@@ -187,11 +187,11 @@ Build the DTBs:
 make dtbs
 ```
 
-Now that the default kernel build is ready, we can add imx462 driver sources and build them using `build.sh` script.
+Now that the default kernel build is ready, you can add the imx462 driver sources and build them using the `build.sh` script.
 
 ```bash
 cd ~/imx462-mipi-nvidia
 ./build.sh
 ```
 
-Upon successful build the kernel files will be retrieved to `./build` directory. They can then be loaded onto target and used just as described in [Quickstart](#quickstart).
+Upon a successful build, the kernel files will be placed in the `./build` directory. They can then be loaded onto the target.
