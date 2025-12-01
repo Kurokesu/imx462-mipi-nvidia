@@ -83,16 +83,23 @@ python3 view_raw.py ./imx462_1080p.raw
 
 Sensor has built-in test pattern generator which can be enabled for verifying data validity.
 
-In order to enable it, simply add `test_mode=<test pattern>` to `insmod` command.
-
-Horizontal color-bar chart example:
+After running `sudo ./setup.sh` the driver is installed and loaded automatically at boot.  
+The `test_mode` module parameter can then be controlled at runtime via sysfs:
 
 ```bash
-sudo insmod ./prebuilt/nv_imx462.ko test_mode=2
+# Horizontal color‑bar chart example (test_mode = 2)
+echo 2 | sudo tee /sys/module/nv_imx462/parameters/test_mode
+```
+
+To turn the test pattern off:
+
+```bash
+echo 0 | sudo tee /sys/module/nv_imx462/parameters/test_mode
 ```
 
 | Test pattern code | Description |
 | ------------ | ----------- |
+| 0 | Off |
 | 1 | Sequence Pattern 1 |
 | 2 | Horizontal Color-bar Chart |
 | 3 | Vertical Color-bar Chart |
