@@ -61,6 +61,8 @@ sudo dmesg | grep imx462
 
 ![dmesg-imx462](./img/dmesg.png "dmesg-imx462")
 
+## Image output
+
 ### GStreamer
 
 ```bash
