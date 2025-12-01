@@ -202,10 +202,17 @@ Build the DTBs:
 make dtbs
 ```
 
-Now that the default kernel build is ready, you can add the imx462 driver sources and build them using the `build.sh` script.
+Now that the default kernel build is ready, you can clone imx462 driver repo:
 
 ```bash
-cd ~/imx462-mipi-nvidia
+cd ~
+git clone https://github.com/Kurokesu/imx462-mipi-nvidia.git
+cd imx462-mipi-nvidia/
+```
+
+Build using the `build.sh` script:
+
+```bash
 ./build.sh
 ```
 
