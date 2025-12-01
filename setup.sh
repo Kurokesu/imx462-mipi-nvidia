@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Install from prebuilt files
+# Install from prebuilt directory
 DRV_FILES_DIR=./prebuilt
 
 # Exit on errors
