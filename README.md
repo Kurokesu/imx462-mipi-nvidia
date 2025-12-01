@@ -8,10 +8,14 @@ Prebuilt driver files are provided in [./prebuilt](./prebuilt) directory for qui
 
 To get imx462 running on your Jetson device using prebuilt files:
 
+---
+
 Connect camera to `cam0` port.
 
 > [!NOTE]
 > Currently, only `cam0` port support is implemented.
+
+---
 
 Clone the repository to your Jetson machine and navigate to the cloned directory:
 
@@ -21,11 +25,15 @@ git clone https://github.com/Kurokesu/imx462-mipi-nvidia.git
 cd imx462-mipi-nvidia/
 ```
 
+---
+
 Run setup script:
 
 ```bash
 sudo ./setup.sh
 ```
+
+---
 
 Use the Jetson-IO tool to configure the 24-pin CSI connector:
 
@@ -42,6 +50,8 @@ Navigate through the menu:
 
 4. Save pin changes
 5. Save and reboot to reconfigure pins
+
+---
 
 After reboot verify that the sensor is detected over I2C:
 
