@@ -13,6 +13,7 @@ echo "Copying camera calibration to /var/nvidia/nvcam/settings"
 cp ./tuning/camera_overrides.isp /var/nvidia/nvcam/settings
 
 echo "Installing kernel module"
+mkdir -p /lib/modules/$(uname -r)/extra
 cp $DRV_FILES_DIR/nv_imx462.ko /lib/modules/$(uname -r)/extra
 depmod
 echo nv_imx462 | tee /etc/modules-load.d/kurokesu.conf
