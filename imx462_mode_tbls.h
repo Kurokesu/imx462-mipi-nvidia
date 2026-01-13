@@ -1,3 +1,11 @@
+/* SPDX-License-Identifier: GPL-2.0 */
+/*
+ * imx462_mode_tbls.h - imx462 sensor driver
+ *
+ * Copyright (c) 2016-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * Copyright (c) 2025-2026, UAB Kurokesu. All rights reserved.
+ */
+
 #ifndef __IMX462_MODE_TBLS_H__
 #define __IMX462_MODE_TBLS_H__
 
