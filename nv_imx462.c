@@ -1,3 +1,11 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * nv_imx462.c - imx462 sensor driver
+ *
+ * Copyright (c) 2016-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * Copyright (c) 2025-2026, UAB Kurokesu. All rights reserved.
+ */
+
 #define DEBUG
 
 #include <nvidia/conftest.h>
