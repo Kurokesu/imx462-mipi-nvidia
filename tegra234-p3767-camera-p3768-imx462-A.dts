@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 // SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+// SPDX-FileCopyrightText: Copyright (c) 2026, UAB Kurokesu. All rights reserved.
 
 /dts-v1/;
 /plugin/;
@@ -12,7 +13,7 @@
 
 / {
 	overlay-name = "Camera IMX462-A";
-	jetson-header-name = "Jetson 24pin CSI Connector";
+	jetson-header-name = "Jetson 22pin CSI Connector";
 	compatible = JETSON_COMPATIBLE_P3768;
 	/* IMX462 connected to cam0 port */
 

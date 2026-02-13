@@ -3,7 +3,7 @@
 # Copyright (c) 2026, UAB Kurokesu. All rights reserved.
 #
 # Install IMX462 camera driver (device tree overlay + kernel module via DKMS)
-# Supports JetPack 6.2.1
+# Supports JetPack 6.2.1 and 6.2.2
 
 # Exit on errors
 set -e
