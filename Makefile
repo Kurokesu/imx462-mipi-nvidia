@@ -23,7 +23,7 @@ CPP_FLAGS := -nostdinc -undef -D__DTS__ -x assembler-with-cpp \
              -I$(LOCAL_INCLUDE) -I$(KERNEL_INCLUDE)
 DTC_FLAGS := -@ -I dts -O dtb -Wno-unit_address_vs_reg
 
-# --- L4T version (parsed once, used for header fetch) ---
+# --- L4T version (parsed once, used for header fetch and DTS patching) ---
 L4T_MAJOR := $(shell grep -oP 'R\K[0-9]+' /etc/nv_tegra_release | head -1)
 L4T_MINOR := $(shell grep -oP 'REVISION:\s*\K[0-9]+' /etc/nv_tegra_release | head -1)
 L4T_TAG   := jetson_$(L4T_MAJOR).$(L4T_MINOR)
@@ -59,6 +59,12 @@ $(CONFTEST_H): | $(BUILD_DIR)
 $(BUILD_DIR)/$(DTBO): $(DTS) $(DT_HEADER) | $(BUILD_DIR)
 	@echo "  CPP     $<"
 	@$(CPP) $(CPP_FLAGS) -o $(BUILD_DIR)/$(DTS:.dts=.dts.preprocessed) $<
+	@# DTS defaults to 22pin (JetPack 6.2.2+). Patch to 24pin for L4T < 36.5.
+	@if [ "$(L4T_MAJOR)" -lt 36 ] 2>/dev/null || { [ "$(L4T_MAJOR)" -eq 36 ] && [ "$(L4T_MINOR)" -lt 5 ]; }; then \
+		echo "  PATCH   jetson-header-name -> 24pin (L4T $(L4T_MAJOR).$(L4T_MINOR))"; \
+		sed -i 's|Jetson 22pin CSI Connector|Jetson 24pin CSI Connector|' \
+			$(BUILD_DIR)/$(DTS:.dts=.dts.preprocessed); \
+	fi
 	@echo "  DTC     $@"
 	@$(DTC) $(DTC_FLAGS) -o $@ $(BUILD_DIR)/$(DTS:.dts=.dts.preprocessed)
 	@rm -f $(BUILD_DIR)/$(DTS:.dts=.dts.preprocessed)
