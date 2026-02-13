@@ -21,8 +21,6 @@
 
 #include <media/tegra_v4l2_camera.h>
 #include <media/tegracam_core.h>
-
-#include "../platform/tegra/camera/camera_gpio.h"
 #include "imx462_mode_tbls.h"
 
 /* IMX462 Register Definitions */
