@@ -1,0 +1,28 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-only
+# Copyright (c) 2026, UAB Kurokesu. All rights reserved.
+#
+# DKMS post-install script: build and install the device tree overlay.
+
+set -e
+
+DKMS_SRC="$(cd "$(dirname "$0")" && pwd)"
+DTS="tegra234-p3767-camera-p3768-imx462-A.dts"
+DTBO="${DTS%.dts}.dtbo"
+
+KERNEL_INCLUDE="/usr/src/linux-headers-$(uname -r | sed 's/-tegra.*/-tegra-ubuntu22.04_aarch64/')/3rdparty/canonical/linux-jammy/kernel-source/include"
+LOCAL_INCLUDE="$DKMS_SRC/include"
+
+PREPROCESSED="/tmp/${DTS}.preprocessed"
+
+echo "Building device tree overlay..."
+cpp -nostdinc -undef -D__DTS__ -x assembler-with-cpp \
+    -I"$LOCAL_INCLUDE" -I"$KERNEL_INCLUDE" \
+    -o "$PREPROCESSED" "$DKMS_SRC/$DTS"
+
+dtc -@ -I dts -O dtb -Wno-unit_address_vs_reg \
+    -o "/boot/$DTBO" "$PREPROCESSED" 2>/dev/null
+
+rm -f "$PREPROCESSED"
+
+echo "Installed /boot/$DTBO"
