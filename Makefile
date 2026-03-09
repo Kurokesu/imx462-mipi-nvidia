@@ -23,10 +23,9 @@ CPP_FLAGS := -nostdinc -undef -D__DTS__ -x assembler-with-cpp \
              -I$(LOCAL_INCLUDE) -I$(KERNEL_INCLUDE)
 DTC_FLAGS := -@ -I dts -O dtb -Wno-unit_address_vs_reg
 
-# --- L4T version (parsed once, used for header fetch and DTS patching) ---
+# --- L4T version (used for DTS patching) ---
 L4T_MAJOR := $(shell grep -oP 'R\K[0-9]+' /etc/nv_tegra_release | head -1)
 L4T_MINOR := $(shell grep -oP 'REVISION:\s*\K[0-9]+' /etc/nv_tegra_release | head -1)
-L4T_TAG   := jetson_$(L4T_MAJOR).$(L4T_MINOR)
 
 # --- Kernel module ---
 KDIR      := /lib/modules/$(shell uname -r)/build
@@ -49,7 +48,7 @@ module: $(BUILD_DIR)/nv_imx462.ko
 
 $(DT_HEADER): | $(BUILD_DIR)
 	@echo "  FETCH   NVIDIA device tree headers"
-	@./scripts/fetch-nvidia-headers.sh $(LOCAL_INCLUDE) $(L4T_TAG)
+	@./scripts/fetch-nvidia-headers.sh $(LOCAL_INCLUDE)
 
 $(CONFTEST_H): | $(BUILD_DIR)
 	@echo "  GEN     conftest.h"
