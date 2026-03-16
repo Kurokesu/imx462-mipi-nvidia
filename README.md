@@ -3,14 +3,17 @@
 ![JetPack 6.2.1](https://img.shields.io/badge/JetPack_6.2.1-L4T_36.4.4-brightgreen?logo=nvidia&logoColor=white)
 ![JetPack 6.2.2](https://img.shields.io/badge/JetPack_6.2.2-L4T_36.5.0-brightgreen?logo=nvidia&logoColor=white)
 
-## Quickstart
+NVIDIA Jetson kernel driver for Sony IMX462 — a 2 MP starvis back side illuminated CMOS sensor optimized for low-light and night-vision applications.
 
-Connect camera to `cam0` port.
+- 2-lane MIPI CSI-2
+- 10-bit RAW output
+- 1920×1080 @ 30 fps
+- HCG (High Conversion Gain) mode for improved low-light SNR
 
 > [!NOTE]
 > Currently, only `cam0` port support is implemented.
 
----
+## Setup
 
 Install required tools:
 
@@ -18,7 +21,7 @@ Install required tools:
 sudo apt install -y --no-install-recommends dkms
 ```
 
-Clone the repository to your Jetson machine and navigate to the cloned directory:
+Clone this repository:
 
 ```bash
 cd ~
@@ -26,23 +29,19 @@ git clone https://github.com/Kurokesu/imx462-mipi-nvidia.git
 cd imx462-mipi-nvidia/
 ```
 
----
-
-Build and install:
+Run setup script:
 
 ```bash
 sudo ./setup.sh
 ```
 
-The setup script:
+Setup script:
 - Fetches NVIDIA device tree headers
-- Installs the kernel module via [DKMS](https://github.com/dell/dkms), which automatically rebuilds the module and device tree overlay when the kernel is updated
-- Builds and installs the device tree overlay (`.dtbo`) to `/boot` via a DKMS post-install hook
+- Installs kernel module via [DKMS](https://github.com/dell/dkms), which automatically rebuilds module and device tree overlay when kernel is updated
+- Builds and installs device tree overlay (`.dtbo`) to `/boot` via a DKMS post-install hook
 - Installs camera ISP calibration overrides
 
----
-
-Use the Jetson-IO tool to configure the CSI connector:
+Use Jetson-IO to configure the CSI connector:
 
 ```bash
 sudo /opt/nvidia/jetson-io/jetson-io.py
@@ -58,9 +57,7 @@ Navigate through the menu:
 4. Save pin changes
 5. Save and reboot to reconfigure pins
 
----
-
-After reboot verify that the sensor is detected over I2C:
+After reboot, verify sensor is detected:
 
 ```bash
 sudo dmesg | grep imx462
@@ -92,25 +89,26 @@ Stream raw data to file:
 v4l2-ctl -d /dev/video0 --set-fmt-video=width=1920,height=1080,pixelformat=RG10 --stream-mmap --stream-to imx462_1080p.raw --stream-count=1 --stream-skip=10 --verbose
 ```
 
-View raw bayer file:
+View raw Bayer file:
 
 ```bash
 python3 view_raw.py ./imx462_1080p.raw
 ```
+```
 
 ## Test mode
 
-The sensor has a built-in test pattern generator that can be used to verify data validity.
+Sensor has a built-in test pattern generator for verifying data validity.
 
-After running `sudo ./setup.sh` the driver is installed and loaded automatically at boot.  
-The `test_mode` module parameter can then be controlled at runtime via sysfs:
+After running `sudo ./setup.sh`, driver is installed and loaded automatically at boot.
+`test_mode` module parameter can be controlled at runtime via sysfs:
 
 ```bash
 # Horizontal color‑bar chart example (test_mode = 2)
 echo 2 | sudo tee /sys/module/nv_imx462/parameters/test_mode
 ```
 
-To turn the test pattern off:
+Turn test pattern off:
 
 ```bash
 echo 0 | sudo tee /sys/module/nv_imx462/parameters/test_mode
@@ -137,7 +135,7 @@ sudo make install # copy dtbo to /boot, rmmod + insmod the module
 ```
 
 > [!NOTE]
-> The module is loaded immediately via `insmod` but won't persist across reboots. Use `sudo ./setup.sh` for permanent installation via DKMS.
+> Module is loaded immediately via `insmod` but won't persist across reboots. Use `sudo ./setup.sh` for permanent installation via DKMS.
 
 Individual targets:
 
@@ -147,4 +145,4 @@ make module    # build only the kernel module
 make clean     # remove build artifacts
 ```
 
-All build artifacts are placed in the `./build` directory.
+Build artifacts are placed in `./build`.
