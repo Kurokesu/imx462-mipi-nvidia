@@ -6,7 +6,7 @@
  * Copyright (c) 2025-2026, UAB Kurokesu. All rights reserved.
  */
 
-#define DEBUG
+/* #define DEBUG */
 
 #include <nvidia/conftest.h>
 
@@ -41,7 +41,7 @@
 
 #define IMX462_GROUP_HOLD_ADDR 0x3001
 
-/* TODO: IMX462 has no model ID. We read a registers with known values. */
+/* TODO: IMX462 has no model ID. We read a few registers with known values. */
 #define IMX462_MODEL_ID_ADDR_MSB 0x3004
 #define IMX462_MODEL_ID_ADDR_LSB 0x3008
 
