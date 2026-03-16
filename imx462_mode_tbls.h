@@ -167,7 +167,6 @@ static imx462_reg imx462_mode_common[] = {
 	{ IMX462_INCKSEL6, 0x1A },
 	{ IMX462_PHY_LANE_NUM, 0x01 }, /* 2 lanes */
 	{ IMX462_CSI_LANE_MODE, 0x01 }, /* 2 lanes */
-	{ IMX462_FR_FDG_SEL, 0x02 }, /* lcg mode 30fps */
 	{ IMX462_REPETITION, 0x10 },
 	{ IMX462_TCLKPOST, 0x57 },
 	{ IMX462_THSZERO, 0x37 },

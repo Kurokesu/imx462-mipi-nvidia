@@ -51,6 +51,11 @@
 #define IMX462_PGCTRL_THRU BIT(1)
 #define IMX462_PGCTRL_MODE(n) ((n) << 4)
 
+/* Conversion gain */
+#define IMX462_FDG_HCG BIT(4)
+#define IMX462_FDG_LCG 0
+#define IMX462_FRSEL_30FPS 0x02
+
 static const struct of_device_id imx462_of_match[] = {
 	{ .compatible = "sony,imx462" },
 	{},
@@ -60,6 +65,10 @@ MODULE_DEVICE_TABLE(of, imx462_of_match);
 
 static int test_mode;
 module_param(test_mode, int, 0644);
+
+static bool hcg_mode;
+module_param(hcg_mode, bool, 0644);
+MODULE_PARM_DESC(hcg_mode, "Enable HCG mode");
 
 static const u32 ctrl_cid_list[] = {
 	TEGRA_CAMERA_CID_GAIN,
@@ -638,6 +647,15 @@ static int imx462_set_mode(struct tegracam_device *tc_dev)
 	}
 	if (err)
 		return err;
+
+	err = imx462_write_reg(s_data, IMX462_FR_FDG_SEL,
+			       IMX462_FRSEL_30FPS |
+				       (hcg_mode ? IMX462_FDG_HCG :
+						   IMX462_FDG_LCG));
+	if (err)
+		return err;
+
+	dev_dbg(tc_dev->dev, "hcg_mode: %d\n", hcg_mode);
 
 	return 0;
 }
