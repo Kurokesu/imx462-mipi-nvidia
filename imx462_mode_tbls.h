@@ -96,10 +96,10 @@ static imx462_reg imx462_stop[] = {
 /* IMX462 Common Mode */
 static imx462_reg imx462_mode_common[] = {
 	{ IMX462_WINWV_OB, 12 },
-	{ IMX462_WINPH_LSB, 0 },
-	{ IMX462_WINPH_MSB, 0 },
-	{ IMX462_WINPV_LSB, 0 },
-	{ IMX462_WINPV_MSB, 0 },
+	{ IMX462_WINPH_LSB, 0x00 },
+	{ IMX462_WINPH_MSB, 0x00 },
+	{ IMX462_WINPV_LSB, 0x00 },
+	{ IMX462_WINPV_MSB, 0x00 },
 	{ IMX462_WINWH_LSB, 1948 & 0xFF },
 	{ IMX462_WINWH_MSB, (1948 >> 8) & 0xFF },
 	{ IMX462_WINWV_LSB, 1097 & 0xFF },
@@ -138,7 +138,7 @@ static imx462_reg imx462_mode_common[] = {
 	{ 0x32CB, 0x04 },
 	{ 0x332C, 0xD3 },
 	{ 0x332D, 0x10 },
-	{ 0x332E, 0x0d },
+	{ 0x332E, 0x0D },
 	{ 0x3358, 0x06 },
 	{ 0x3359, 0xE1 },
 	{ 0x335A, 0x11 },
@@ -155,8 +155,8 @@ static imx462_reg imx462_mode_common[] = {
 	{ IMX462_INCKSEL2, 0x03 },
 	{ IMX462_INCKSEL3, 0x20 },
 	{ IMX462_INCKSEL4, 0x01 },
-	{ IMX462_INCKSEL5, 0x1a },
-	{ IMX462_INCKSEL6, 0x1a },
+	{ IMX462_INCKSEL5, 0x1A },
+	{ IMX462_INCKSEL6, 0x1A },
 	{ IMX462_PHY_LANE_NUM, 0x01 }, /* 2 lanes */
 	{ IMX462_CSI_LANE_MODE, 0x01 }, /* 2 lanes */
 	{ IMX462_FR_FDG_SEL, 0x02 }, /* lcg mode 30fps */
@@ -174,8 +174,8 @@ static imx462_reg imx462_mode_common[] = {
 
 /* 1920x1080@30fps 2-lane mode */
 static imx462_reg imx462_mode_1920x1080[] = {
-	{ IMX462_ADBIT, 0 },
-	{ IMX462_OUT_CTRL, 0 },
+	{ IMX462_ADBIT, 0x00 },
+	{ IMX462_OUT_CTRL, 0x00 },
 	{ IMX462_ADBIT1, 0x1D },
 	{ IMX462_ADBIT2, 0x12 },
 	{ IMX462_ADBIT3, 0x37 },
