@@ -94,6 +94,21 @@ View raw Bayer file:
 ```bash
 python3 view_raw.py ./imx462_1080p.raw
 ```
+
+## HCG mode
+
+IMX462 supports High Conversion Gain (HCG) mode — improves signal-to-noise ratio in low-light conditions. Sensor operates in Low Conversion Gain (LCG) by default.
+
+Toggle at runtime via sysfs (takes effect on next stream start):
+
+```bash
+echo 1 | sudo tee /sys/module/nv_imx462/parameters/hcg_mode
+```
+
+Switch back to LCG:
+
+```bash
+echo 0 | sudo tee /sys/module/nv_imx462/parameters/hcg_mode
 ```
 
 ## Test mode
