@@ -1,4 +1,4 @@
-# imx462 MIPI NVIDIA driver
+# IMX462 MIPI NVIDIA driver
 
 ![JetPack 6.2.1](https://img.shields.io/badge/JetPack_6.2.1-L4T_36.4.4-brightgreen?logo=nvidia&logoColor=white)
 ![JetPack 6.2.2](https://img.shields.io/badge/JetPack_6.2.2-L4T_36.5.0-brightgreen?logo=nvidia&logoColor=white)
@@ -36,10 +36,10 @@ sudo ./setup.sh
 ```
 
 Setup script:
-- Fetches NVIDIA device tree headers
-- Installs kernel module via [DKMS](https://github.com/dell/dkms), which automatically rebuilds module and device tree overlay when kernel is updated
-- Builds and installs device tree overlay (`.dtbo`) to `/boot` via a DKMS post-install hook
-- Installs camera ISP calibration overrides
+- Fetches NVIDIA device tree headers required for build
+- Builds and installs kernel module via [DKMS](https://github.com/dell/dkms)
+- Builds and copies device tree overlay (`.dtbo`) to `/boot`
+- Copies ISP calibration overrides to `/var/nvidia/nvcam/settings/`
 
 Use Jetson-IO to configure the CSI connector:
 
@@ -97,9 +97,9 @@ python3 view_raw.py ./imx462_1080p.raw
 
 ## HCG mode
 
-IMX462 supports High Conversion Gain (HCG) mode — improves signal-to-noise ratio in low-light conditions. Sensor operates in Low Conversion Gain (LCG) by default.
+IMX462 supports High Conversion Gain (HCG) mode for improved signal-to-noise ratio in low-light conditions. Default is Low Conversion Gain (LCG).
 
-Toggle at runtime via sysfs (takes effect on next stream start):
+Enable HCG:
 
 ```bash
 echo 1 | sudo tee /sys/module/nv_imx462/parameters/hcg_mode
@@ -113,10 +113,9 @@ echo 0 | sudo tee /sys/module/nv_imx462/parameters/hcg_mode
 
 ## Test mode
 
-Sensor has a built-in test pattern generator for verifying data validity.
+IMX462 has a built-in test pattern generator for verifying data validity.
 
-After running `sudo ./setup.sh`, driver is installed and loaded automatically at boot.
-`test_mode` module parameter can be controlled at runtime via sysfs:
+Enable test pattern:
 
 ```bash
 # Horizontal color‑bar chart example (test_mode = 2)
@@ -146,7 +145,7 @@ For manual builds without DKMS:
 
 ```bash
 make              # build everything (dtbo + kernel module)
-sudo make install # copy dtbo to /boot, rmmod + insmod the module
+sudo make install # copy dtbo to /boot, rmmod + insmod
 ```
 
 > [!NOTE]
