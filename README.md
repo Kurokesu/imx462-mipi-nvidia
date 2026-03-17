@@ -83,6 +83,12 @@ nvgstcapture-1.0 --sensor-id 0
 
 ### Raw v4l2
 
+Install `v4l-utils`:
+
+```bash
+sudo apt install -y v4l-utils
+```
+
 Stream raw data to file:
 
 ```bash
