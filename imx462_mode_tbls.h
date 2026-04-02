@@ -71,7 +71,6 @@
 #define IMX462_Y_OUT_SIZE_MSB 0x3419
 
 #define IMX462_GAIN 0x3014
-// #define IMX462_VMAX					CCI_REG24_LE(0x3018)
 #define IMX462_SHS1_LSB 0x3020
 #define IMX462_HMAX_LSB 0x301C
 #define IMX462_HMAX_MSB 0x301D
@@ -96,23 +95,21 @@ static imx462_reg imx462_stop[] = {
 
 /* IMX462 Common Mode */
 static imx462_reg imx462_mode_common[] = {
-	/* imx290_global_init_settings */
 	{ IMX462_WINWV_OB, 12 },
-	{ IMX462_WINPH_LSB, 0 },
-	{ IMX462_WINPH_MSB, 0 },
-	{ IMX462_WINPV_LSB, 0 },
-	{ IMX462_WINPV_MSB, 0 },
+	{ IMX462_WINPH_LSB, 0x00 },
+	{ IMX462_WINPH_MSB, 0x00 },
+	{ IMX462_WINPV_LSB, 0x00 },
+	{ IMX462_WINPV_MSB, 0x00 },
 	{ IMX462_WINWH_LSB, 1948 & 0xFF },
 	{ IMX462_WINWH_MSB, (1948 >> 8) & 0xFF },
 	{ IMX462_WINWV_LSB, 1097 & 0xFF },
 	{ IMX462_WINWV_MSB, (1097 >> 8) & 0xFF },
-	{ IMX462_XSOUTSEL, 0x0A }, /* HSYNC output enabled in original */
-	{ 0x3012, 0x64 },
-	{ 0x3013, 0x00 },
-	/* imx290->model->init_regs */
+	{ IMX462_XSOUTSEL, 0x0A },
 	{ 0x300F, 0x00 },
 	{ 0x3010, 0x21 },
 	{ 0x3011, 0x02 },
+	{ 0x3012, 0x64 },
+	{ 0x3013, 0x00 },
 	{ 0x3016, 0x09 },
 	{ 0x3070, 0x02 },
 	{ 0x3071, 0x11 },
@@ -131,6 +128,14 @@ static imx462_reg imx462_mode_common[] = {
 	{ 0x313D, 0x83 },
 	{ 0x3150, 0x03 },
 	{ 0x317E, 0x00 },
+	{ 0x3257, 0x03 },
+	{ 0x3264, 0x1A },
+	{ 0x3265, 0xB0 },
+	{ 0x3266, 0x02 },
+	{ 0x326B, 0x10 },
+	{ 0x3274, 0x1B },
+	{ 0x3275, 0xA0 },
+	{ 0x3276, 0x02 },
 	{ 0x32B8, 0x50 },
 	{ 0x32B9, 0x10 },
 	{ 0x32BA, 0x00 },
@@ -141,7 +146,7 @@ static imx462_reg imx462_mode_common[] = {
 	{ 0x32CB, 0x04 },
 	{ 0x332C, 0xD3 },
 	{ 0x332D, 0x10 },
-	{ 0x332E, 0x0d },
+	{ 0x332E, 0x0D },
 	{ 0x3358, 0x06 },
 	{ 0x3359, 0xE1 },
 	{ 0x335A, 0x11 },
@@ -151,7 +156,6 @@ static imx462_reg imx462_mode_common[] = {
 	{ 0x33B0, 0x50 },
 	{ 0x33B2, 0x1A },
 	{ 0x33B3, 0x04 },
-	/* imx290_set_clock */
 	{ IMX462_EXTCK_FREQ_LSB, 0x20 }, /* 37.125MHz */
 	{ IMX462_EXTCK_FREQ_MSB, 0x25 },
 	{ IMX462_INCKSEL7, 0x49 },
@@ -159,13 +163,11 @@ static imx462_reg imx462_mode_common[] = {
 	{ IMX462_INCKSEL2, 0x03 },
 	{ IMX462_INCKSEL3, 0x20 },
 	{ IMX462_INCKSEL4, 0x01 },
-	{ IMX462_INCKSEL5, 0x1a },
-	{ IMX462_INCKSEL6, 0x1a },
-	/* imx290_set_data_lanes */
+	{ IMX462_INCKSEL5, 0x1A },
+	{ IMX462_INCKSEL6, 0x1A },
 	{ IMX462_PHY_LANE_NUM, 0x01 }, /* 2 lanes */
 	{ IMX462_CSI_LANE_MODE, 0x01 }, /* 2 lanes */
 	{ IMX462_FR_FDG_SEL, 0x02 }, /* lcg mode 30fps */
-	/* imx290_set_csi_config */
 	{ IMX462_REPETITION, 0x10 },
 	{ IMX462_TCLKPOST, 0x57 },
 	{ IMX462_THSZERO, 0x37 },
@@ -178,28 +180,23 @@ static imx462_reg imx462_mode_common[] = {
 	{ IMX462_TABLE_END, 0x00 },
 };
 
-/* IMX462 1920x1080 2-lane mode */
+/* 1920x1080@30fps 2-lane mode */
 static imx462_reg imx462_mode_1920x1080[] = {
-	/* imx290_setup_format */
-	{ IMX462_ADBIT, 0 },
-	{ IMX462_OUT_CTRL, 0 },
+	{ IMX462_ADBIT, 0x00 },
+	{ IMX462_OUT_CTRL, 0x00 },
 	{ IMX462_ADBIT1, 0x1D },
 	{ IMX462_ADBIT2, 0x12 },
 	{ IMX462_ADBIT3, 0x37 },
 	{ IMX462_CSI_DT_FMT_LSB, 0x0A },
 	{ IMX462_CSI_DT_FMT_MSB, 0x0A },
-	/* imx290_set_black_level*/
 	{ IMX462_BLKLEVEL, 0x3C },
-	/* imx290->current_mode->data */
 	{ IMX462_WINWV_OB, 12 },
 	{ IMX462_OPB_SIZE_V, 0x0A },
 	{ IMX462_X_OUT_SIZE_LSB, 1920 & 0xFF },
 	{ IMX462_X_OUT_SIZE_MSB, (1920 >> 8) & 0xFF },
 	{ IMX462_Y_OUT_SIZE_LSB, 1080 & 0xFF },
 	{ IMX462_Y_OUT_SIZE_MSB, (1080 >> 8) & 0xFF },
-	/* v4l2_ctrl_handler_setup */
 	{ IMX462_GAIN, 0x00 },
-	// { IMX462_VMAX, 1125 }, // TODO: Default is 1125, see if needs rewriting
 	{ IMX462_SHS1_LSB, 11 },
 	{ IMX462_HMAX_LSB, 4400 & 0xFF },
 	{ IMX462_HMAX_MSB, (4400 >> 8) & 0xFF },
