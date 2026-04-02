@@ -167,7 +167,6 @@ static imx462_reg imx462_mode_common[] = {
 	{ IMX462_INCKSEL6, 0x1A },
 	{ IMX462_PHY_LANE_NUM, 0x01 }, /* 2 lanes */
 	{ IMX462_CSI_LANE_MODE, 0x01 }, /* 2 lanes */
-	{ IMX462_FR_FDG_SEL, 0x02 }, /* lcg mode 30fps */
 	{ IMX462_REPETITION, 0x10 },
 	{ IMX462_TCLKPOST, 0x57 },
 	{ IMX462_THSZERO, 0x37 },
@@ -208,11 +207,12 @@ static imx462_reg imx462_mode_test_pattern[] = {
 	{ IMX462_TABLE_WAIT_MS, IMX462_WAIT_MS * 10 },
 };
 
-enum { IMX462_MODE_1920X1080,
-       IMX462_MODE_COMMON,
-       IMX462_START_STREAM,
-       IMX462_STOP_STREAM,
-       IMX462_MODE_TEST_PATTERN,
+enum {
+	IMX462_MODE_1920X1080,
+	IMX462_MODE_COMMON,
+	IMX462_START_STREAM,
+	IMX462_STOP_STREAM,
+	IMX462_MODE_TEST_PATTERN,
 };
 
 static imx462_reg *mode_table[] = {
