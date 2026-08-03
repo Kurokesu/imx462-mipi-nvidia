@@ -39,9 +39,9 @@ Setup script:
 - Fetches NVIDIA device tree headers required for build
 - Builds and installs kernel module via [DKMS](https://github.com/dell/dkms)
 - Builds and copies device tree overlay (`.dtbo`) to `/boot`
-- Copies ISP calibration overrides to `/var/nvidia/nvcam/settings/`
+- Installs ISP tuning to `/var/nvidia/nvcam/settings/`
 
-Use Jetson-IO to configure the CSI connector:
+Use Jetson-IO to configure CSI connector:
 
 ```bash
 sudo /opt/nvidia/jetson-io/jetson-io.py
@@ -144,6 +144,17 @@ echo 0 | sudo tee /sys/module/nv_imx462/parameters/test_mode
 | 5 | Gradation Pattern 1 |
 | 6 | Gradation Pattern 2 |
 | 7 | 000h/555h Toggle Pattern |
+
+## ISP tuning
+
+Tuning file carries ISP parameters calibrated for this sensor: black level, lens shading, white balance and color correction. Global `camera_overrides.isp` applies to every camera and would shadow it, so setup retires it to `camera_overrides.isp.bak`.
+
+To restore default ISP parameters, remove tuning file and restart Argus:
+
+```bash
+sudo rm /var/nvidia/nvcam/settings/kurokesu_front_462M12.isp
+sudo systemctl restart nvargus-daemon
+```
 
 ## Development builds
 
