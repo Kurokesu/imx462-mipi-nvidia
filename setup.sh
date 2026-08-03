@@ -10,14 +10,18 @@ set -e
 # Status line formatter (matches Makefile's PRINT)
 print() { printf '  %-7s %s\n' "$1" "$2"; }
 
-# Derive package identity and paths from dkms.conf
+# Package identity and install paths
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 DKMS_CONF="$SCRIPT_DIR/dkms.conf"
 VERSION=$(grep '^PACKAGE_VERSION=' "$DKMS_CONF" | cut -d'"' -f2)
 PACKAGE_NAME=$(grep '^PACKAGE_NAME=' "$DKMS_CONF" | cut -d'"' -f2)
 SENSOR=$(grep '^BUILT_MODULE_NAME=' "$DKMS_CONF" | cut -d'"' -f2 | sed 's/^nv_//')
 DKMS_SRC="/usr/src/${PACKAGE_NAME}-${VERSION}"
+TUNING_DIR="$SCRIPT_DIR/tuning"
+NVCAM_SETTINGS="/var/nvidia/nvcam/settings"
+GLOBAL_ISP="$NVCAM_SETTINGS/camera_overrides.isp"
 
+# Check required variables
 if [ -z "$VERSION" ] || [ -z "$PACKAGE_NAME" ] || [ -z "$SENSOR" ]; then
 	echo "Error: failed to parse $DKMS_CONF"
 	exit 1
@@ -71,6 +75,17 @@ dkms build -m "$PACKAGE_NAME" -v "$VERSION"
 
 print DKMS "install ${PACKAGE_NAME}/${VERSION}"
 dkms install -m "$PACKAGE_NAME" -v "$VERSION"
+
+# Install ISP tuning
+if [ -d "$TUNING_DIR" ]; then
+	print COPY "ISP tuning -> $NVCAM_SETTINGS"
+	cp "$TUNING_DIR"/*.isp "$NVCAM_SETTINGS/"
+
+	if [ -e "$GLOBAL_ISP" ]; then
+		print RETIRE "camera_overrides.isp -> camera_overrides.isp.bak"
+		mv "$GLOBAL_ISP" "$GLOBAL_ISP.bak"
+	fi
+fi
 
 echo ""
 echo "Done. To configure CSI connector, run:"
