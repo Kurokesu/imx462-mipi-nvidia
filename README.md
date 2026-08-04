@@ -5,7 +5,7 @@
 ![JetPack 6.2.1](https://img.shields.io/badge/JetPack_6.2.1-L4T_36.4.4-brightgreen?logo=nvidia&logoColor=white)
 ![JetPack 6.2.2](https://img.shields.io/badge/JetPack_6.2.2-L4T_36.5.0-brightgreen?logo=nvidia&logoColor=white)
 
-NVIDIA Jetson kernel driver for Sony IMX462 — a 2 MP starvis back side illuminated CMOS sensor optimized for low-light and night-vision applications.
+NVIDIA Jetson kernel driver for Sony IMX462, a 2 MP 1/2.8" STARVIS back-side illuminated CMOS sensor optimised for low-light and night-vision applications.
 
 - 2-lane MIPI CSI-2
 - 10-bit RAW output
