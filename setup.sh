@@ -41,12 +41,22 @@ if [ ! -e "/lib/modules/$(uname -r)/build/Makefile" ]; then
 	exit 1
 fi
 
-# Remove DKMS registrations matching sensor name
+# Remove DKMS registrations matching sensor name, sweep their source trees
 dkms status 2>/dev/null | sed 's/[,:].*//' | sort -u | while read -r ENTRY; do
 	case "${ENTRY%%/*}" in
 	*"$SENSOR"*)
 		print DKMS "remove $ENTRY"
-		dkms remove "$ENTRY" --all || true
+		if OUT=$(dkms remove "$ENTRY" --all 2>&1); then
+			# dkms remove only deregisters, source tree is installer's to clean
+			OLD_SRC="/usr/src/${ENTRY%%/*}-${ENTRY#*/}"
+			if [ -f "$OLD_SRC/dkms.conf" ]; then
+				print CLEAN "$OLD_SRC"
+				rm -rf "$OLD_SRC"
+			fi
+		else
+			print WARN "could not fully remove $ENTRY" >&2
+			printf '%s\n' "$OUT" >&2
+		fi
 		;;
 	esac
 done
