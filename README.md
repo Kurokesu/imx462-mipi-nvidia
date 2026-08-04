@@ -52,7 +52,7 @@ Navigate through the menu:
 2. Configure for compatible hardware
 3. Select Camera IMX462-A
 
-![jetson-io-tool](./docs/jetson-io-tool.png "jetson-io-tool")
+![Jetson-IO menu with Camera IMX462-A selected.](./docs/jetson-io-tool.png)
 
 4. Save pin changes
 5. Save and reboot to reconfigure pins
