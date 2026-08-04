@@ -63,7 +63,15 @@ After reboot, verify sensor is detected:
 sudo dmesg | grep imx462
 ```
 
-![dmesg-imx462](./docs/dmesg.png "dmesg-imx462")
+Expected output:
+
+```
+nv_imx462: module verification failed: signature and/or required key missing - tainting kernel
+imx462 9-001a: tegracam sensor driver:imx462_v2.0.6
+tegra-camrtc-capture-vi tegra-capture-vi: subdev imx462 9-001a bound
+```
+
+*Signature warning is expected since DKMS modules are unsigned.*
 
 ## Image output
 
