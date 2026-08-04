@@ -82,7 +82,7 @@
 				 */
 				modules {
 					module0 {
-						badge = "kurokesu_front_462M12";
+						badge = "kurokesu_front_462CSI";
 						position = "front";
 						orientation = "1";
 						drivernode0 {

@@ -152,7 +152,7 @@ Tuning file carries ISP parameters calibrated for this sensor: black level, lens
 To restore default ISP parameters, remove tuning file and restart Argus:
 
 ```bash
-sudo rm /var/nvidia/nvcam/settings/kurokesu_front_462M12.isp
+sudo rm /var/nvidia/nvcam/settings/kurokesu_front_462CSI.isp
 sudo systemctl restart nvargus-daemon
 ```
 
