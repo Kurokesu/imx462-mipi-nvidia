@@ -51,7 +51,7 @@ dkms status 2>/dev/null | sed 's/[,:].*//' | sort -u | while read -r ENTRY; do
 			OLD_SRC="/usr/src/${ENTRY%%/*}-${ENTRY#*/}"
 			if [ -f "$OLD_SRC/dkms.conf" ]; then
 				print CLEAN "$OLD_SRC"
-				rm -rf "$OLD_SRC"
+				rm -rf "$OLD_SRC" || print WARN "could not remove $OLD_SRC" >&2
 			fi
 		else
 			print WARN "could not fully remove $ENTRY" >&2
