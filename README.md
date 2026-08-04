@@ -15,6 +15,10 @@ NVIDIA Jetson kernel driver for Sony IMX462, a 2 MP 1/2.8" STARVIS back-side ill
 > [!NOTE]
 > Currently, only `cam0` port support is implemented.
 
+![Kurokesu camera modules connected to a Jetson carrier board over CSI ribbon cables.](./docs/kurokesu-on-jetson.jpg)
+
+*IMX462 camera modules are available at [kurokesu.com](https://www.kurokesu.com/item/462C-CSI)*
+
 ## Setup
 
 Install required tools:
