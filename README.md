@@ -52,7 +52,7 @@ Navigate through the menu:
 2. Configure for compatible hardware
 3. Select Camera IMX462-A
 
-![jetson-io-tool](./img/jetson-io-tool.png "jetson-io-tool")
+![jetson-io-tool](./docs/jetson-io-tool.png "jetson-io-tool")
 
 4. Save pin changes
 5. Save and reboot to reconfigure pins
@@ -63,7 +63,7 @@ After reboot, verify sensor is detected:
 sudo dmesg | grep imx462
 ```
 
-![dmesg-imx462](./img/dmesg.png "dmesg-imx462")
+![dmesg-imx462](./docs/dmesg.png "dmesg-imx462")
 
 ## Image output
 
