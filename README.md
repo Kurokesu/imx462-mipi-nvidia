@@ -42,6 +42,7 @@ sudo ./setup.sh
 ```
 
 Setup script:
+
 - Fetches NVIDIA device tree headers required for build
 - Builds and installs kernel module via [DKMS](https://github.com/dell/dkms)
 - Builds and copies device tree overlay (`.dtbo`) to `/boot`
@@ -54,11 +55,12 @@ sudo /opt/nvidia/jetson-io/jetson-io.py
 ```
 
 Navigate through the menu:
+
 1. Configure Jetson CSI Connector (named "22pin" on 6.2.2, "24pin" on 6.2.1)
 2. Configure for compatible hardware
 3. Select Camera IMX462-A
 
-![Jetson-IO menu with Camera IMX462-A selected.](./docs/jetson-io-tool.png)
+    ![Jetson-IO menu with Camera IMX462-A selected.](./docs/jetson-io-tool.png)
 
 4. Save pin changes
 5. Save and reboot to reconfigure pins
@@ -89,7 +91,7 @@ gst-launch-1.0 -e nvarguscamerasrc sensor-id=0 ! \
    queue ! nvvidconv ! queue ! nveglglessink
 ```
 
-### NVIDIA sample camera capture application
+### nvgstcapture
 
 ```bash
 nvgstcapture-1.0 --sensor-id 0
@@ -138,7 +140,7 @@ IMX462 has a built-in test pattern generator for verifying data validity.
 Enable test pattern:
 
 ```bash
-# Horizontal color‑bar chart example (test_mode = 2)
+# Horizontal color-bar chart example (test_mode = 2)
 echo 2 | sudo tee /sys/module/nv_imx462/parameters/test_mode
 ```
 
@@ -149,7 +151,7 @@ echo 0 | sudo tee /sys/module/nv_imx462/parameters/test_mode
 ```
 
 | Test pattern code | Description |
-| ------------ | ----------- |
+| ----------------- | ----------- |
 | 0 | Off |
 | 1 | Sequence Pattern 1 |
 | 2 | Horizontal Color-bar Chart |
