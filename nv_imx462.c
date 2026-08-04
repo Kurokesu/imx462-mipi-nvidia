@@ -108,7 +108,7 @@ static inline void imx462_get_vmax_regs(imx462_reg *regs, u32 vmax)
 	(regs + 1)->val = (vmax >> 8) & 0xff;
 
 	(regs + 2)->addr = IMX462_VMAX_ADDR_LSB;
-	(regs + 2)->val = (vmax)&0xff;
+	(regs + 2)->val = (vmax) & 0xff;
 }
 
 static inline void imx462_get_coarse_time_regs_shs1(imx462_reg *regs,
@@ -121,7 +121,7 @@ static inline void imx462_get_coarse_time_regs_shs1(imx462_reg *regs,
 	(regs + 1)->val = (coarse_time >> 8) & 0xff;
 
 	(regs + 2)->addr = IMX462_COARSE_TIME_SHS1_ADDR_LSB;
-	(regs + 2)->val = (coarse_time)&0xff;
+	(regs + 2)->val = (coarse_time) & 0xff;
 }
 
 static inline void imx462_get_gain_reg(imx462_reg *regs, u8 gain)
