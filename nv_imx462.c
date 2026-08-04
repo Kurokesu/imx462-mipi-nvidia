@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
- * nv_imx462.c - imx462 sensor driver
+ * imx462 sensor driver
  *
  * Copyright (c) 2016-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * Copyright (c) 2025-2026, UAB Kurokesu. All rights reserved.
@@ -796,7 +796,7 @@ static int imx462_probe(struct i2c_client *client,
 
 	priv->i2c_client = tc_dev->client = client;
 	tc_dev->dev = dev;
-	strncpy(tc_dev->name, "imx462", sizeof(tc_dev->name));
+	strscpy(tc_dev->name, "imx462", sizeof(tc_dev->name));
 	tc_dev->dev_regmap_config = &sensor_regmap_config;
 	tc_dev->sensor_ops = &imx462_common_ops;
 	tc_dev->v4l2sd_internal_ops = &imx462_subdev_internal_ops;
