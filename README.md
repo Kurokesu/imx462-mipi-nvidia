@@ -58,7 +58,7 @@ Navigate through the menu:
 
 1. Configure Jetson CSI Connector (named "22pin" on 6.2.2, "24pin" on 6.2.1)
 2. Configure for compatible hardware
-3. Select Camera IMX462-A
+3. Select `Camera IMX462-A`
 
     ![Jetson-IO menu with Camera IMX462-A selected.](./docs/jetson-io-tool.png)
 
